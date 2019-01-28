@@ -68,7 +68,7 @@ module.exports = {
             let url = "https://wxlogin.magiclizi.com";
             let postBody = {
                 url: `${url}/verifyToken`,
-                form: {token:token,gameTag:'darkChess'},
+                form: {token:token,gameTag:'zq'},
             };
             Request.post(postBody,(err,response,body)=>{
                 if(err){
