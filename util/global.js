@@ -1,0 +1,1 @@
+global['Log'] = require('./log');

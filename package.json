@@ -1,0 +1,17 @@
+{
+  "name": "zqserver",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dataAccess": "^0.1.7",
+    "log4js": "^4.0.0",
+    "moment": "^2.24.0",
+    "ws": "^6.1.3"
+  }
+}
