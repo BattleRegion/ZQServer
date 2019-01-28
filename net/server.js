@@ -25,6 +25,7 @@ module.exports = {
             Log.info(`客户端 ${ws.realAddress} 连接成功`);
             ws.on("message", data=>{
                 Log.debug(`ws client receive msg ${data}`);
+                BaseHandler.parseReqPackage(data, ws);
             });
 
             ws.on("close", (code, reason)=>{
@@ -46,7 +47,7 @@ module.exports = {
         });
 
         webSocketServer.on("close", ()=>{
-            Log.debug(`ws server close`);
+            Log.info(`ws server close`);
             this.curServer = null;
             this.userWs = {};
 
