@@ -40,7 +40,8 @@ module.exports = {
                 });
             }
             catch (e) {
-                Log.info(`不存在 客户端 ${ws.realAddress} 发送的 handler : ${handlerName}`);
+                console.log(e.stack);
+                Log.info(`不存在 客户端 ${ws.realAddress} 发送的 handler : ${handlerName} `);
             }
         }
         else{
@@ -63,8 +64,8 @@ module.exports = {
 
     verifyToken: function(handler, event, token, cb){
         let apiStr = `${handler}_${event}`;
-        Log.info(`尝试验证token : ${token} ${apiStr}`);
         if(!filterVerify[apiStr]){
+            Log.info(`尝试验证token : ${token} ${apiStr}`);
             let url = "https://wxlogin.magiclizi.com";
             let postBody = {
                 url: `${url}/verifyToken`,
