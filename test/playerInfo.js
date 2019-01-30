@@ -1,22 +1,23 @@
 const Base = require('./base');
 
-class HeartBreak extends  Base {
+class PlayerInfo extends  Base {
 
     constructor(env,handler){
         super(env);
 
         this.msgHandler = handler;
-
     }
 
     test(){
         this.send({
-            handler:'sys',
-            event:'heartbreak',
-            rawData:{}
+            handler:'player',
+            event:'info',
+            rawData:{
+                token:this.userToken
+            }
         });
         super.test();
     }
 }
 
-module.exports = HeartBreak;
+module.exports = PlayerInfo;
