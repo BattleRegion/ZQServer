@@ -1,6 +1,6 @@
 module.exports = {
 
-    createLevel:function(req_p, ws){
+    createTestLevel:function(req_p, ws){
 
     }
 };
