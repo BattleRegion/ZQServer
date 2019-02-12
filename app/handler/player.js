@@ -39,5 +39,16 @@ module.exports = {
                 } , ws);
             }
         })
+    },
+
+    //绑定用户
+    bindPlayer:(req_p, ws) =>{
+        let rawData = req_p.rawData;
+        let uid = rawData['uid'].toString();
+        ServerManager.bindUser(uid, ws);
+        Log.info(`用户:${uid} 绑定成功`);
+        BaseHandler.commonResponse(req_p, {
+            code: GameCode.SUCCESS,
+        },ws)
     }
 };

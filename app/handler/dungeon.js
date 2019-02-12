@@ -1,6 +1,6 @@
 module.exports = {
 
-    createTestLevel:function(req_p, ws){
-
+    createLevel:function(req_p, ws){
+        let uid = req_p.rawData.uid;
     }
 };
