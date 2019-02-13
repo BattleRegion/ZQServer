@@ -8,6 +8,7 @@ const request = require('request');
 const decompress = require('decompress');
 const decompressUnzip = require('decompress-unzip');
 module.exports = {
+
     refreshGameConf:function(cb){
         Log.info(`开始更新游戏配置！`);
         let sql = new Command('select * from gameConf where valid = 1',[]);

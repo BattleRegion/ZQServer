@@ -1,14 +1,11 @@
 const Base = require('./base');
-
-class PlayerInfo extends  Base {
+class Player extends Base {
 
     constructor(env,handler){
-        super(env);
-
-        this.msgHandler = handler;
+        super(env, handler);
     }
 
-    test(){
+    info(){
         this.send({
             handler:'player',
             event:'info',
@@ -16,8 +13,7 @@ class PlayerInfo extends  Base {
                 token:this.userToken
             }
         });
-        super.test();
     }
 }
 
-module.exports = PlayerInfo;
+module.exports = Player;

@@ -2,7 +2,7 @@ const WebSocket = require('ws');
 const CryptoUtil = require('../util/cryptoUtil');
 const sign = require('../conf/common')['package_md5_key'];
 class Base {
-    constructor(env){
+    constructor(env, handler){
         this.userToken = '7c59b0f7e0fc00aa489cf004e45d6f7ad27039a8eccccc191e5f019041b84f24e1165ae7d950011e3faffc8e1d12b425';
         this.url = env === "prod"?"wss://zq.magiclizi.com":"ws://127.0.0.1:9999";
         this.ws = new WebSocket(this.url);
@@ -13,7 +13,7 @@ class Base {
 
         this.ws.on('open', function open() {
             console.log(`open :${self.url}`);
-            self.test();
+            handler();
         });
 
         this.ws.on('message', function incoming(data) {
