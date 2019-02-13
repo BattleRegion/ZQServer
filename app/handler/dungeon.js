@@ -29,6 +29,7 @@ module.exports = {
                 }
 
                 let monsterLotteryID = curLevelBasic['MONSTER_LOTTERY'];
+                //(1)生成怪物
                 Log.info(`需要为用户生成 ${uid} 当前 关卡 ${dId} 层级 ${levelM} 层数 ${level} 怪物库为:${monsterLotteryID}`);
                 let eLotteryPool = EnemyGacha.enemyLotteryPool(monsterLotteryID);
                 if(eLotteryPool.length === 0){
@@ -72,8 +73,42 @@ module.exports = {
                         Log.info(`不存在id ${eId} 的怪物！`);
                     }
                 }
+
                 console.log(enemies);
+
+                //(*)随机没有位置的单位
+                let allUnits = [];
+                allUnits = allUnits.concat(enemies);
+
+                for(let i = 0;i<allUnits.length;i++){
+
+                }
+
+                this.randomUnitPos(allUnits);
             }
         });
+    },
+
+    randomUnitPos:function(allUnits){
+        Log.info(`randomUnitPos ${JSON.stringify(allUnits)}`);
+        let allPos = {};
+        for(let i = 0; i<7;i++){
+            for(let j = 0;j<9;j++){
+                let need = true;
+                for(let k = 0;k<allUnits.length;k++){
+                    let unit = allUnits[k];
+                    if(unit.posX === i && unit.posY === j){
+                        need = false;break;
+                    }
+                }
+
+                if(need){
+                    allPos.push({x:i,y:j});
+                }
+            }
+        }
+
+        //去除已经存在的
+        console.log(allPos);
     }
 };
