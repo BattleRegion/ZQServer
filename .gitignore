@@ -82,3 +82,4 @@ conf
 */.DS_Store
 
 app/gameConf/files
+app/gameConf/v.json
