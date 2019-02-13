@@ -80,3 +80,5 @@ conf
 
 .DS_Store
 */.DS_Store
+
+app/gameConf/files

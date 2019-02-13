@@ -3,3 +3,4 @@ global['CommonConf'] = require('../conf/common');
 global['ServerManager'] = require('../net/server');
 global['BaseHandler'] = require('../app/handler/base');
 global['GameCode'] = require('./gameCode');
+global['DBEnv_ZQ'] = CommonConf['env'];
