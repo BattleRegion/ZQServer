@@ -74,41 +74,49 @@ module.exports = {
                     }
                 }
 
-                console.log(enemies);
-
                 //(*)随机没有位置的单位
                 let allUnits = [];
                 allUnits = allUnits.concat(enemies);
+                let existPos = [];
 
-                for(let i = 0;i<allUnits.length;i++){
+                for(let i = 0; i<7;i++){
+                    for(let j = 0;j<9;j++){
+                        let need = true;
+                        for(let k = 0;k<allUnits.length;k++){
+                            let unit = allUnits[k];
+                            if(unit.posX === i && unit.posY === j){
+                                need = false;break;
+                            }
+                        }
 
+                        if(need){
+                            existPos.push({x:i,y:j});
+                        }
+                    }
                 }
 
-                this.randomUnitPos(allUnits);
+                for(let i = 0;i<allUnits.length;i++){
+                    let unit = allUnits[i];
+                    if(!unit.posX&&!unit.posY){
+                        this.randomUnitPos(existPos, unit);
+                    }
+                }
+
+                console.log(enemies);
             }
         });
     },
 
-    randomUnitPos:function(allUnits){
-        Log.info(`randomUnitPos ${JSON.stringify(allUnits)}`);
-        let allPos = {};
-        for(let i = 0; i<7;i++){
-            for(let j = 0;j<9;j++){
-                let need = true;
-                for(let k = 0;k<allUnits.length;k++){
-                    let unit = allUnits[k];
-                    if(unit.posX === i && unit.posY === j){
-                        need = false;break;
-                    }
-                }
 
-                if(need){
-                    allPos.push({x:i,y:j});
-                }
-            }
-        }
 
-        //去除已经存在的
-        console.log(allPos);
+    randomUnitPos:function(existPos, unit){
+        Log.info(`randomUnitPos ...`);
+        Log.info(unit);
+        let randomIndex = CryptoUtil.rnd(0, existPos.length);
+        let randPos = existPos[randomIndex];
+        unit.posX = randPos.x;
+        unit.posY = randPos.y;
+        existPos.splice(randomIndex, 1);
+        Log.info(`random pos ${JSON.stringify(randPos)}`);
     }
 };
