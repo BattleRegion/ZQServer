@@ -5,6 +5,7 @@ const Player = require('../model/game/play/player');
 const LevelBasic = require('../model/game/gconf/levelBasic');
 const EnemyGacha = require('../model/game/gconf/enemyGacha');
 const EnemyBase = require('../model/game/gconf/enemyBase');
+const EnemyStatus = require('../model/game/gconf/enemyStatus');
 const CryptoUtil = require('../../util/cryptoUtil');
 let Enemy = require('../model/game/play/fight/enemy');
 let Mine = require('../model/game/play/fight/mine');
@@ -49,18 +50,29 @@ module.exports = {
                     }
                 }
                 let enemyIDS = resultEL['ENEMY_ID'].split('\r\n');
-                Log.info(`随机数为 ${random} monster 抽取结果为 ${JSON.stringify(resultEL)} 怪物ID 为 ${enemyIDS}`);
+                let enemyPoses = curLevelBasic['MONSTER_POSITION'].split('#');
+                Log.info(`随机数为 ${random} monster 抽取结果为 ${JSON.stringify(resultEL)} 怪物ID 为 ${enemyIDS} 可选位置为 ${enemyPoses}`);
                 let enemies = [];
                 for(let i = 0;i<enemyIDS.length;i++){
                     let eId = enemyIDS[i];
                     let eConf = EnemyBase.enemy(eId);
                     if(eConf){
-                        console.log(eConf);
+                        let kind = eConf['ENEMY_STATUS_KIND'];
+                        let baseAttr = EnemyStatus.baseAttribute(kind);
+                        if(baseAttr){
+                            let pos = enemyPoses[i];
+                            let e = new Enemy(eConf, baseAttr, pos);
+                            enemies.push(e);
+                        }
+                        else{
+                            Log.info(`不存在kind ${kind} 的 enemyStatus！`);
+                        }
                     }
                     else{
                         Log.info(`不存在id ${eId} 的怪物！`);
                     }
                 }
+                console.log(enemies);
             }
         });
     }
