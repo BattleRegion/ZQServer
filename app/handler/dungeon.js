@@ -111,8 +111,12 @@ module.exports = {
                             }
                             let sql = new Command('update dungeon set finishAt = ?,state = 1 where id = ? and finishAt is null',[cur, dungeonId]);
                             sqls.push(sql);
-                            if(hasNext){
+                            if(!hasNext || quit){
                                 let sql1 = new Command('update player set dungeon_level = ?, dungeon_role = null where wx_uid = ?',[nextDungeonLevel, uid]);
+                                sqls.push(sql1);
+                            }
+                            else{
+                                let sql1 = new Command('update player set dungeon_level = ? where wx_uid = ?',[nextDungeonLevel, uid]);
                                 sqls.push(sql1);
                             }
                             Executor.transaction(DBEnv_ZQ, sqls, (e,r)=>{
