@@ -16,6 +16,7 @@ module.exports = {
             if(e){
                 return cb(e, null);
             }
+            console.log(r);
             let svConf = r[0];
             let svVersion = svConf['version'];
             let needUpdate = false;
