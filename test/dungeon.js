@@ -14,6 +14,17 @@ class Dungeon extends Base {
             }
         });
     }
+
+    finishLevel(){
+        this.send({
+            handler:'dungeon',
+            event:'finishLevel',
+            rawData:{
+                token:this.userToken,
+                dungeonId:1
+            }
+        });
+    }
 }
 
 module.exports = Dungeon;

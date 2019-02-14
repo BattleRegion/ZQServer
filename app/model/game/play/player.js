@@ -34,6 +34,8 @@ module.exports = {
                                         uid: dbPlayer['id'],
                                         wx_uid: dbPlayer['wx_uid'],
                                         dungeon_level:dbPlayer['dungeon_level'],
+                                        dungeon_role:dbPlayer['dungeon_role'],
+                                        role:dbPlayer['role']
                                     };
                                     Executor.redisSet(DBEnv_ZQ, key, JSON.stringify(userInfo), (e)=>{
                                         if(e){
@@ -41,7 +43,7 @@ module.exports = {
                                             cb(new Error(GameCode.REDIS_ERROR), null);
                                         }
                                         else{
-                                            Log.info(`getPlayerInfo from db and insert into redis ${JSON.stringify(r)}`);
+                                            Log.info(`getPlayerInfo from db and insert into redis ${JSON.stringify(userInfo)}`);
                                             cb(null, userInfo);
                                         }
                                     });
@@ -52,7 +54,9 @@ module.exports = {
                             let userInfo = {
                                 uid: r['insertId'],
                                 wx_uid: wxUid,
-                                dungeon_level:'1_1_1'
+                                dungeon_level:'1_1_1',
+                                role:1,
+                                dungeon_role:null,
                             };
                             Executor.redisSet(DBEnv_ZQ, key, JSON.stringify(userInfo), (e)=>{
                                 if(e){
@@ -72,6 +76,17 @@ module.exports = {
                     })
                 }
             }
+        })
+    },
+
+    //设置用户缓存信息
+    refreshCachePlayerInfo: function(playerInfo, cb){
+        let key = `${REDIS_PLAYER_KEY}:${playerInfo.wx_uid}`;
+        Executor.redisSet(DBEnv_ZQ, key, JSON.stringify(playerInfo), e=>{
+            if(e){
+                Log.error(`refreshCachePlayerInfo error ${e}`);
+            }
+            cb&&cb(e);
         })
     }
 };
