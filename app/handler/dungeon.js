@@ -19,9 +19,17 @@ module.exports = {
                 BaseHandler.commonResponse(req_p, {code:e.message},ws);
             }
             else{
-
+                let d_level_info = playerInfo['dungeon_level'].split("_");
+                let dId = ~~d_level_info[0];
+                let levelM = ~~d_level_info[1];
+                let level = ~~d_level_info[2];
+                let curLevelBasic = LevelBasic.confByDungeonLevel(dId, levelM, level);
+                if(!curLevelBasic){
+                    Log.info(`用户${uid}需要创建 LEVEL_BASIC_NOT_EXIST ${playerInfo['dungeon_level']}`);
+                    return BaseHandler.commonResponse(req_p, {code:GameCode.LEVEL_BASIC_NOT_EXIST},ws);
+                }
                 //(1)生成怪物
-                let enemies = this.createLevelEnemies(playerInfo, req_p, ws);
+                let enemies = this.createLevelEnemies(curLevelBasic, uid, req_p, ws);
                 if(enemies.length === 0){
                     return BaseHandler.commonResponse(req_p, {code:GameCode.LEVEL_NO_ENEMIES},ws);
                 }
@@ -70,7 +78,7 @@ module.exports = {
                         }
                         else{
                             //存在则不需要记录
-                            BaseHandler.commonResponse(req_p, {code:GameCode.SUCCESS,dungeonId:existDungeon['id'], role:role, enemies:enemies},ws);
+                            BaseHandler.commonResponse(req_p, {code:GameCode.SUCCESS,dungeonId:existDungeon['id'], role:role, enemies:enemies, elements:curLevelBasic['SURFACE_ELEMENT']},ws);
                         }
                     });
                 });
@@ -152,27 +160,43 @@ module.exports = {
         });
     },
 
-    createLevelEnemies:function(playerInfo, req_p ,ws){
+    createLevelEnemies:function(curLevelBasic, uid, req_p ,ws){
         //(1)生成怪物
-        let uid = playerInfo.wx_uid;
-        let d_level_info = playerInfo['dungeon_level'].split("_");
-        let dId = ~~d_level_info[0];
-        let levelM = ~~d_level_info[1];
-        let level = ~~d_level_info[2];
-        let curLevelBasic = LevelBasic.confByDungeonLevel(dId, levelM, level);
-        if(!curLevelBasic){
-            Log.info(`用户${uid}需要创建 LEVEL_BASIC_NOT_EXIST ${playerInfo['dungeon_level']}`);
-            return BaseHandler.commonResponse(req_p, {code:GameCode.LEVEL_BASIC_NOT_EXIST},ws);
+        let dId = curLevelBasic["ID"];
+        let levelM = curLevelBasic["STAGE"];
+        let level = curLevelBasic["STAGE_NUM"];
+        let monsterLotteryIDs = curLevelBasic['MONSTER_LOTTERY'];
+        Log.info(`需要为用户生成 ${uid} 当前 关卡 ${dId} 层级 ${levelM} 层数 ${level} 怪物库为:${monsterLotteryIDs}`);
+        //先抽pool
+        let lids = monsterLotteryIDs.split(',');
+        let monsterLotteryID = 0;
+        if(lids.length === 1){
+            monsterLotteryID = lids[0];
         }
-        let monsterLotteryID = curLevelBasic['MONSTER_LOTTERY'];
-        Log.info(`需要为用户生成 ${uid} 当前 关卡 ${dId} 层级 ${levelM} 层数 ${level} 怪物库为:${monsterLotteryID}`);
+        else if(lids.length > 1){
+            let random = CryptoUtil.rnd(0,10000);
+            Log.info(`lottery enemies random ${random}`);
+            let lastEnd = 0;
+            for(let i = 0;i<lids.length;i++){
+                let lid = lids[i].split(['#']);
+                let offset = ~~lid[0];
+                let mlId = lid[1];
+                let begin = lastEnd;
+                let end = lastEnd + offset - 1;
+                lastEnd = lastEnd + offset;
+                if(random >= begin && random <= end){
+                    monsterLotteryID = mlId;break;
+                }
+            }
+        }
+        Log.info(`最终怪物抽奖ID 为 ${monsterLotteryID}`);
+
         let eLotteryPool = EnemyGacha.enemyLotteryPool(monsterLotteryID);
         if(eLotteryPool.length === 0){
             Log.info(`enemy_gacha ${monsterLotteryID} not exist`);
-            return BaseHandler.commonResponse(req_p, {code:GameCode.Enemy_Gacha_NOT_EXIST},ws);
+            return []
         }
-
-        let random = CryptoUtil.rnd(0, 100) * 100;
+        let random = CryptoUtil.rnd(0, 10000);
         let resultEL = null;
         let lastRate = 0;
         for(let i = 0;i<eLotteryPool.length;i++){
@@ -208,8 +232,6 @@ module.exports = {
                 Log.info(`不存在id ${eId} 的怪物！`);
             }
         }
-        // Log.info(`用户　${uid} Level ${playerInfo['dungeon_level']} 生成怪物:`);
-        // Log.info(enemies);
         return enemies;
     },
 
