@@ -14,9 +14,9 @@ module.exports = {
         let sql = new Command('select * from gameConf where valid = 1',[]);
         Executor.query(DBEnv_ZQ, sql, (e,r)=>{
             if(e){
-                return cb(e, null);
+                Log.error(`refreshConf db error ${e}`);
+                return cb(false);
             }
-            console.log(r);
             let svConf = r[0];
             let svVersion = svConf['version'];
             let needUpdate = false;
