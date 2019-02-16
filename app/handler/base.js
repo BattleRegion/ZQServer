@@ -91,7 +91,7 @@ module.exports = {
             })
         }
         else{
-            Log.info(`${apiStr} 不需要验证`);
+            Log.debug(`${apiStr} 不需要验证`);
             cb(true);
         }
     },
