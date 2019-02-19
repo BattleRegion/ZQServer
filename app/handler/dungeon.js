@@ -76,8 +76,8 @@ module.exports = {
                                 }
                                 BaseHandler.commonResponse(req_p, {code:GameCode.SUCCESS,dungeonId:did, role:role, enemies:enemies,
                                     elements:curLevelBasic['SURFACE_ELEMENT'],globalConf:{
-                                        a_factor:global.getGlobalConf("A_FACTOR"),
-                                        b_factor:global.getGlobalConf("B_FACTOR"),
+                                        a_factor:GlobalConf.getGlobalConf("A_FACTOR"),
+                                        b_factor:GlobalConf.getGlobalConf("B_FACTOR"),
                                     }},ws);
                             })
                         }
@@ -85,8 +85,8 @@ module.exports = {
                             //存在则不需要记录
                             BaseHandler.commonResponse(req_p, {code:GameCode.SUCCESS,dungeonId:existDungeon['id'], role:role, enemies:enemies,
                                 elements:curLevelBasic['SURFACE_ELEMENT'],globalConf:{
-                                    a_factor:global.getGlobalConf("A_FACTOR"),
-                                    b_factor:global.getGlobalConf("B_FACTOR"),
+                                    a_factor:GlobalConf.getGlobalConf("A_FACTOR"),
+                                    b_factor:GlobalConf.getGlobalConf("B_FACTOR"),
                                 }},ws);
                         }
                     });

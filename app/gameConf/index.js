@@ -48,7 +48,7 @@ module.exports = {
                 let stream = fs.createWriteStream(dist);
                 request(url).pipe(stream).on('close', ()=>{
                     //unzip to
-                    decompress(dist, __dirname, {
+                    decompress(dist, `${__dirname}/${path.basename(dist, ".zip")}`, {
                         plugins: [
                             decompressUnzip()
                         ]
@@ -58,11 +58,13 @@ module.exports = {
                         Log.info(`clear files rename new to files`);
 
                         let confPath = `${__dirname}/files`;
-                        let files = fs.readdirSync(`${confPath}`);
-                        files.forEach(function(file, index) {
-                            let curPath = confPath + "/" + file;
-                            fs.unlinkSync(curPath);
-                        });
+                        if (fs.existsSync(confPath)){
+                            let files = fs.readdirSync(`${confPath}`);
+                            files.forEach(function(file, index) {
+                                let curPath = confPath + "/" + file;
+                                fs.unlinkSync(curPath);
+                            });
+                        }
 
                         fs.rename(`${__dirname}/${path.basename(url, '.zip')}`, `${confPath}`, function(err) {
                             if(err){
