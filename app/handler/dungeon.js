@@ -7,6 +7,7 @@ const EnemyGacha = require('../model/game/gconf/enemyGacha');
 const EnemyBase = require('../model/game/gconf/enemyBase');
 const EnemyStatus = require('../model/game/gconf/enemyStatus');
 const RoleBasic = require('../model/game/gconf/role');
+const GlobalConf = require('../model/game/gconf/global');
 const CryptoUtil = require('../../util/cryptoUtil');
 let Enemy = require('../model/game/play/fight/enemy');
 let Role = require('../model/game/play/fight/role');
@@ -73,12 +74,20 @@ module.exports = {
                                     Log.error(`createLevelRecord db error ${e}`);
                                     return BaseHandler.commonResponse(req_p, {code:GameCode.DB_ERROR},ws);
                                 }
-                                BaseHandler.commonResponse(req_p, {code:GameCode.SUCCESS,dungeonId:did, role:role, enemies:enemies},ws);
+                                BaseHandler.commonResponse(req_p, {code:GameCode.SUCCESS,dungeonId:did, role:role, enemies:enemies,
+                                    elements:curLevelBasic['SURFACE_ELEMENT'],globalConf:{
+                                        a_factor:global.getGlobalConf("A_FACTOR"),
+                                        b_factor:global.getGlobalConf("B_FACTOR"),
+                                    }},ws);
                             })
                         }
                         else{
                             //存在则不需要记录
-                            BaseHandler.commonResponse(req_p, {code:GameCode.SUCCESS,dungeonId:existDungeon['id'], role:role, enemies:enemies, elements:curLevelBasic['SURFACE_ELEMENT']},ws);
+                            BaseHandler.commonResponse(req_p, {code:GameCode.SUCCESS,dungeonId:existDungeon['id'], role:role, enemies:enemies,
+                                elements:curLevelBasic['SURFACE_ELEMENT'],globalConf:{
+                                    a_factor:global.getGlobalConf("A_FACTOR"),
+                                    b_factor:global.getGlobalConf("B_FACTOR"),
+                                }},ws);
                         }
                     });
                 });
