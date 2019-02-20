@@ -1,10 +1,8 @@
 const conf = require('../../../gameConf/files/global');
-
+console.log(conf.Global[1]);
 module.exports = {
-
-    globalConf : conf.Global[1],
-
     getGlobalConf: function(key){
-        return globalConf[key];
+        console.log(conf.Global[1]);
+        return conf.Global[1][key];
     },
 };
