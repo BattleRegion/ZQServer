@@ -1,6 +1,6 @@
-const Unit = require('./fightUnit');
+const FightUnit = require('./fightUnit');
 
-class Role extends Unit {
+class Role extends FightUnit {
     constructor(roleConf, pos){
         super({
             name : roleConf['NAME'],
