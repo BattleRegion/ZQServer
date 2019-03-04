@@ -1,12 +1,16 @@
-const Unit = require('./fightUnit');
+const FightUnit = require('./fightUnit');
 
-class Enemy extends Unit {
+class Enemy extends FightUnit {
     constructor(enemyConf, baseAttr, pos){
 
         super({
             name: enemyConf['NAME'],
             pos:pos,
         });
+
+        this.level = enemyConf['LEVEL'];
+        this.size = enemyConf['SIZE'];
+        this.scale = enemyConf['SCALE'];
 
         let baseAttr_ratio = enemyConf['STATUS_RATIO'].split('\n');
         let curBaseAttr = Object.assign({},baseAttr);
