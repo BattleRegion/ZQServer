@@ -70,7 +70,7 @@ module.exports = {
 	                            		Log.info('getPlayerCards and insert into redis ...');
 	                            		cb(null, handList);
 	                            }
-                            	});
+                            	})
 			        		} else {
 			        			Log.error(`No cards found from ${JSON.stringify(cardIdList)}, set redis error`);
 	                        cb(new Error(GameCode.REDIS_ERROR), null);
@@ -80,7 +80,7 @@ module.exports = {
 	                    cb(new Error(GameCode.REDIS_ERROR), null);
 			        }
                 }
-    		})
-    		
-    }
-};
+    			}
+		})
+	}
+}
