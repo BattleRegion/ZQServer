@@ -20,7 +20,7 @@ module.exports = {
                 if (!base_gacha) {
                 		BaseHandler.commonResponse(req_p, {code:`No base gacha found by role: ${play_role}`},ws);
                 }
-                CardGacha.getPlayerCards(uid, base_gacha['BASIC_CARDGROUPID'], base_gacha['BASIC_CARDNUM'], (e, handInfo)=>{
+                CardGacha.initPlayerCards(uid, base_gacha['BASIC_CARDGROUPID'], base_gacha['BASIC_CARDNUM'], (e, handInfo)=>{
                 		if(e){
 		                BaseHandler.commonResponse(req_p, {code:e.message},ws);
 		            } else {
@@ -39,6 +39,13 @@ module.exports = {
     discard:function(req_p, ws) {
     		let uid = req_p.rawData.uid;
     		let cid = req_p.rawData.cid;
+    		CardGacha.discardPlayerCards(uid, cid, (e, discardInfo)=>{
+    			if(e){
+		    		BaseHandler.commonResponse(req_p, {code:e.message},ws);
+		    } else {
+		        BaseHandler.commonResponse(req_p, {code:GameCode.SUCCESS, discardInfo:discardInfo},ws);
+		    }
+    		})
     		//TODO
     },
     
