@@ -8,7 +8,7 @@ const Player = require('../model/game/play/player');
 
 module.exports = {
 
-    initStack:function(req_p, ws) =>{
+    initStack:function(req_p, ws) {
         let uid = req_p.rawData.uid;
         Player.getPlayerInfo(uid, (e,playerInfo)=>{
             if(e){
@@ -31,18 +31,18 @@ module.exports = {
         })
     },
     
-    draw:function(req_p, ws) =>{
+    draw:function(req_p, ws) {
     		let uid = req_p.rawData.uid;
     		//TODO
     },
     
-    discard:function(req_p, ws) =>{
+    discard:function(req_p, ws) {
     		let uid = req_p.rawData.uid;
     		let cid = req_p.rawData.cid;
     		//TODO
     },
     
-    loot:function(req_p, ws) =>{
+    loot:function(req_p, ws) {
     		let uid = req_p.rawData.uid;
     		//TODO
     }

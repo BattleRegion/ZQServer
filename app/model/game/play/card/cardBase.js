@@ -1,11 +1,11 @@
 const DataAccess = require('dataAccess');
 const Executor = DataAccess.executor;
 const Command = DataAccess.command;
-const conf = require('../../../gameConf/files/card_base');
+const conf = require('../../../../gameConf/files/card_basic');
 
 module.exports = {
 
-	Card = conf['Card'],
+	Card: conf['Card'],
 
     getCardInfo: function(cardID){
         for(let i = 0;i< this.Card.length;i++){

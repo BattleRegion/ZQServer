@@ -1,18 +1,18 @@
 const DataAccess = require('dataAccess');
 const Executor = DataAccess.executor;
 const Command = DataAccess.command;
-const roleConf = require('../../../gameConf/files/role');
-const cardGachaConf = require('../../../gameConf/files/card_gacha');
-const cardConf = require('../../../gameConf/files/card_base');
+const roleConf = require('../../../../gameConf/files/role');
+const cardGachaConf = require('../../../../gameConf/files/card_gacha');
+const cardConf = require('../../../../gameConf/files/card_basic');
 const REDIS_PLAYER_CARDS_KEY = 'ZQ_PLAYER_CARDS_KEY';
 
 module.exports = {
 
-	CardGacha = cardGachaConf['Card_Gacha'],
+	CardGacha: cardGachaConf['Card_Gacha'],
 	
-	Card = cardConf['Card'],
+	Card: cardConf['Card'],
 	
-	Role = roleConf['Role_Basic'],
+	Role: roleConf['Role_Basic'],
 	
 	roleBaseGacha: function(roleId) {
 		for (let i = 0; i < this.Role.length; i++) {
@@ -50,7 +50,7 @@ module.exports = {
 			        if (cardIdList.length > 0) {
 			        		let CardList = [];
 			        		//TODO make CardBase a dict?
-			        		for (let i = 0; i< this.cardIdList.length; i++) {
+			        		for (let i = 0; i< cardIdList.length; i++) {
 			        			for (let j = 0; j < this.Card.length; j++) {
 			        				let card = this.Card[i];
 			        				if (card['ID'] == cardIdList[i]) {
