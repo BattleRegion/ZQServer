@@ -7,6 +7,7 @@ const path = require('path');
 const request = require('request');
 const decompress = require('decompress');
 const decompressUnzip = require('decompress-unzip');
+const download = require('download');
 module.exports = {
 
     refreshGameConf:function(cb){
@@ -45,9 +46,7 @@ module.exports = {
                 let url = svConf['url'];
                 let dist = `${__dirname}/${path.basename(url)}`;
                 Log.info(`download path ${url} to ${dist}`);
-                let stream = fs.createWriteStream(dist);
-                request(url).pipe(stream).on('close', (e)=>{
-                    console.log(e);
+                download(url, dist).then(() => {
                     //unzip to
                     decompress(dist, `${__dirname}/${path.basename(dist, ".zip")}`, {
                         plugins: [
@@ -76,7 +75,11 @@ module.exports = {
                             }
                         });
                     });
+                }).catch(e=>{
+                    Log.error(`download update error!`);
+                    Log.error(e);
                 });
+
             }
             else{
                 cb(true);
