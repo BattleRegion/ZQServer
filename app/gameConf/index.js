@@ -46,7 +46,8 @@ module.exports = {
                 let dist = `${__dirname}/${path.basename(url)}`;
                 Log.info(`download path ${url} to ${dist}`);
                 let stream = fs.createWriteStream(dist);
-                request(url).pipe(stream).on('close', ()=>{
+                request(url).pipe(stream).on('close', (e)=>{
+                    console.log(e);
                     //unzip to
                     decompress(dist, `${__dirname}/${path.basename(dist, ".zip")}`, {
                         plugins: [
