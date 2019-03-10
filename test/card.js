@@ -14,6 +14,17 @@ class Card extends Base {
             }
         });
     }
+    
+    discard(){
+        this.send({
+            handler:'card',
+            event:'discard',
+            rawData:{
+                token:this.userToken,
+                cid:'200_001_10001'
+            }
+        });
+    }
 
 }
 

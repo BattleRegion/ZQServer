@@ -87,7 +87,7 @@ module.exports = {
 		                        		Log.error(`setPlayerCards redis error ${e}`);
 		                            	cb(new Error(GameCode.REDIS_ERROR), null);
 		                        } else {
-		                            	Log.info('setPlayerCards into redis ${JSON.stringify(cardIdList)}');
+		                            	Log.info(`setPlayerCards into redis ${JSON.stringify(cardIdList)}`);
 		                        }
 				        		})
 							//Store $cardNum cards as init hand
@@ -114,7 +114,30 @@ module.exports = {
 	},
 
 	discardPlayerCards: function(wxUid, cardId, cb) {
-		let key = `${REDIS_PLAYER_DISCARD_KEY}:${wxUid}`;
-		cb(null, 'todo');
+		let discard_key = `${REDIS_PLAYER_DISCARD_KEY}:${wxUid}`;
+		Log.info(`Try to get player hand key ${discard_key}`);
+    		
+    		Executor.redisGet(DBEnv_ZQ, discard_key, (e,r)=>{
+    			if(e){
+                Log.error(`getPlayerDiscard redis error ${e}`);
+                cb(new Error(GameCode.REDIS_ERROR), null);
+            }
+            else{
+            		let discard_cards = [];
+                if(r){
+                    discard_cards = JSON.parse(r);
+                }
+                discard_cards.push(cardId);
+                Executor.redisSet(DBEnv_ZQ, discard_key, JSON.stringify(discard_cards), (e)=>{
+                		if(e){
+	                		Log.error(`setPlayerDiscard redis error ${e}`);
+	                    cb(new Error(GameCode.REDIS_ERROR), null);
+	                } else {
+	                    Log.info(`Insert discard cards into redis ${JSON.stringify(discard_cards)}`);
+	                    cb(null, discard_cards);
+	                }
+                })
+            }
+    		})
 	}
 }

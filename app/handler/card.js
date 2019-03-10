@@ -46,7 +46,6 @@ module.exports = {
 		        BaseHandler.commonResponse(req_p, {code:GameCode.SUCCESS, discardInfo:discardInfo},ws);
 		    }
     		})
-    		//TODO
     },
     
     loot:function(req_p, ws) {
