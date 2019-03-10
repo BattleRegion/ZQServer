@@ -46,7 +46,7 @@ module.exports = {
                 let url = svConf['url'];
                 let dist = `${__dirname}/${path.basename(url)}`;
                 Log.info(`download path ${url} to ${dist}`);
-                download(url, dist).then(() => {
+                download(url, __dirname).then(() => {
                     //unzip to
                     decompress(dist, `${__dirname}/${path.basename(dist, ".zip")}`, {
                         plugins: [
