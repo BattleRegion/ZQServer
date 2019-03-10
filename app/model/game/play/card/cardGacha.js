@@ -14,6 +14,15 @@ module.exports = {
 	
 	Card: cardConf['Card'],
 	
+	CardDict: function() {
+		let dict = {};
+		for (let i = 0; i < this.Card.length; i++) {
+			dict[this.Card[i]['ID']] = this.Card[i];
+		}
+		Log.info(`make CardDict ${JSON.stringify(dict)}`);
+		return dict;
+	},
+	
 	Role: roleConf['Role_Basic'],
 	
 	roleBaseGacha: function(roleId) {
@@ -29,6 +38,7 @@ module.exports = {
     initPlayerCards: function(wxUid, gachaId, cardNum, cb) {
     		let cards_key = `${REDIS_PLAYER_CARDS_KEY}:${wxUid}`;
     		let hand_key = `${REDIS_PLAYER_HAND_KEY}:${wxUid}`;
+    		let cardDict = this.CardDict();
     		Log.info(`Try to get player hand key ${hand_key}`);
     		
     		Executor.redisGet(DBEnv_ZQ, hand_key, (e,r)=>{
@@ -54,15 +64,10 @@ module.exports = {
 			        if (cardIdList.length > 0) {
 			        		let CardList = [];
 
-			        		//TODO make CardBase a dict?
 			        		//Get cards' details by cards id and prepare a card group to make hand
+			        		let cardDict = this.CardDict();
 			        		for (let i = 0; i< cardIdList.length; i++) {
-			        			for (let j = 0; j < this.Card.length; j++) {
-			        				let card = this.Card[j];
-			        				if (card['ID'] == cardIdList[i]) {
-			        					CardList.push(card);
-			        				}
-			        			}
+			        			CardList.push(cardDict[cardIdList[i]]);
 			        		}
 			        		if (CardList.length > 0) {
 			        			//Randomly get $cardNum cards from card group
