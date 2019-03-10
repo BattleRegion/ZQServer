@@ -74,6 +74,9 @@ module.exports = {
                                 cb(true);
                             }
                         });
+                    }).catch(e=>{
+                        Log.error(`zip error`)
+                        Log.error(e);
                     });
                 }).catch(e=>{
                     Log.error(`download update error!`);
