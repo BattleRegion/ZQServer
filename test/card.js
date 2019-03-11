@@ -15,13 +15,13 @@ class Card extends Base {
         });
     }
     
-    discard(){
+    draw(){
         this.send({
             handler:'card',
-            event:'discard',
+            event:'draw',
             rawData:{
                 token:this.userToken,
-                cid:'200_001_10001'
+                discard:['200_001_10002']
             }
         });
     }

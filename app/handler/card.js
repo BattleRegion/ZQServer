@@ -8,8 +8,9 @@ const Player = require('../model/game/play/player');
 
 module.exports = {
 
-    initStack:function(req_p, ws) {
+    draw:function(req_p, ws) {
         let uid = req_p.rawData.uid;
+        let discard = req_p.rawData.discard;
         Player.getPlayerInfo(uid, (e,playerInfo)=>{
             if(e){
                 BaseHandler.commonResponse(req_p, {code:e.message},ws);
@@ -20,32 +21,25 @@ module.exports = {
                 if (!base_gacha) {
                 		BaseHandler.commonResponse(req_p, {code:`No base gacha found by role: ${play_role}`},ws);
                 }
-                CardGacha.initPlayerCards(uid, base_gacha['BASIC_CARDGROUPID'], base_gacha['BASIC_CARDNUM'], (e, handInfo)=>{
-                		if(e){
-		                BaseHandler.commonResponse(req_p, {code:e.message},ws);
-		            } else {
-		            		BaseHandler.commonResponse(req_p, {code:GameCode.SUCCESS, handInfo:handInfo},ws);
-		            }
-                })
+                if (discard){
+                		CardGacha.drawPlayerCards(uid, discard, base_gacha['BASIC_CARDGROUPID'], base_gacha['BASIC_CARDNUM'], (e, drawInfo)=>{
+			    			if(e){
+					    		BaseHandler.commonResponse(req_p, {code:e.message},ws);
+					    } else {
+					        BaseHandler.commonResponse(req_p, {code:GameCode.SUCCESS, drawInfo:drawInfo},ws);
+					    }
+			    		})
+                } else {
+                		CardGacha.initPlayerCards(uid, base_gacha['BASIC_CARDGROUPID'], base_gacha['BASIC_CARDNUM'], (e, handInfo)=>{
+	                		if(e){
+			                BaseHandler.commonResponse(req_p, {code:e.message},ws);
+			            } else {
+			            		BaseHandler.commonResponse(req_p, {code:GameCode.SUCCESS, handInfo:handInfo},ws);
+			            }
+	                })
+                }
             }
         })
-    },
-    
-    draw:function(req_p, ws) {
-    		let uid = req_p.rawData.uid;
-    		//TODO
-    },
-    
-    discard:function(req_p, ws) {
-    		let uid = req_p.rawData.uid;
-    		let cid = req_p.rawData.cid;
-    		CardGacha.discardPlayerCards(uid, cid, (e, discardInfo)=>{
-    			if(e){
-		    		BaseHandler.commonResponse(req_p, {code:e.message},ws);
-		    } else {
-		        BaseHandler.commonResponse(req_p, {code:GameCode.SUCCESS, discardInfo:discardInfo},ws);
-		    }
-    		})
     },
     
     loot:function(req_p, ws) {
