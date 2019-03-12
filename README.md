@@ -43,7 +43,7 @@
 	}
 	```
 
-5. Prepare some initial data in to database:
+5. Prepare some initial data in database:
 
 	```
 	mysql -h 127.0.0.1 -u root -p zq < zq.sql
