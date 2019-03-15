@@ -8,6 +8,7 @@ const request = require('request');
 const decompress = require('decompress');
 const decompressUnzip = require('decompress-unzip');
 const download = require('download');
+
 module.exports = {
 
     refreshGameConf:function(cb){
