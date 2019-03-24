@@ -2,7 +2,7 @@ const conf = require('../../../gameConf/files/role');
 
 module.exports = {
 
-    roleBasics : conf['Role_Basic'],
+    roleBasics : conf,
 
     roleConf: function(roleId){
         for(let i = 0;i< this.roleBasics.length;i++){

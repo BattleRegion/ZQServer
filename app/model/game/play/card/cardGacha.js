@@ -8,9 +8,9 @@ const REDIS_CARDS_KEY = 'ZQ_CARDS_KEY';
 
 module.exports = {
 
-	CardGacha: cardGachaConf['Card_Gacha'],
+	CardGacha: cardGachaConf,
 	
-	Card: cardConf['Card'],
+	Card: cardConf,
 	
 	CardDict: function() {
 		let dict = {};
