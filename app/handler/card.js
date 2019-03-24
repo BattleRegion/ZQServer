@@ -22,11 +22,11 @@ module.exports = {
                 		BaseHandler.commonResponse(req_p, {code:`No base gacha found by role: ${play_role}`},ws);
                 }
                 if (discard){
-                		CardGacha.drawPlayerCards(uid, discard, base_gacha['BASIC_CARDGROUPID'], base_gacha['BASIC_CARDNUM'], (e, drawInfo)=>{
+                		CardGacha.drawPlayerCards(uid, discard, base_gacha['BASIC_CARDGROUPID'], base_gacha['BASIC_CARDNUM'], (e, handInfo)=>{
 			    			if(e){
 					    		BaseHandler.commonResponse(req_p, {code:e.message},ws);
 					    } else {
-					        BaseHandler.commonResponse(req_p, {code:GameCode.SUCCESS, drawInfo:drawInfo},ws);
+					        BaseHandler.commonResponse(req_p, {code:GameCode.SUCCESS, handInfo:handInfo},ws);
 					    }
 			    		})
                 } else {
