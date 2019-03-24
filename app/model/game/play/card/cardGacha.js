@@ -21,7 +21,7 @@ module.exports = {
 		return dict;
 	},
 	
-	Role: roleConf['Role_Basic'],
+	Role: roleConf,
 	
 	roleBaseGacha: function(roleId) {
 		for (let i = 0; i < this.Role.length; i++) {
