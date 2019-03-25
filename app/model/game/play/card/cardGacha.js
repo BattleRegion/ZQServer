@@ -8,9 +8,9 @@ const REDIS_CARDS_KEY = 'ZQ_CARDS_KEY';
 
 module.exports = {
 
-	CardGacha: cardGachaConf['Card_Gacha'],
+	CardGacha: cardGachaConf,
 	
-	Card: cardConf['Card'],
+	Card: cardConf,
 	
 	CardDict: function() {
 		let dict = {};
@@ -21,7 +21,7 @@ module.exports = {
 		return dict;
 	},
 	
-	Role: roleConf['Role_Basic'],
+	Role: roleConf,
 	
 	roleBaseGacha: function(roleId) {
 		for (let i = 0; i < this.Role.length; i++) {

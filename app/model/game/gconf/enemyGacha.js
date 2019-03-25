@@ -2,7 +2,7 @@ const conf = require('../../../gameConf/files/enemy_gacha');
 
 module.exports = {
 
-    enemyGachas : conf['Enemy_Gacha'],
+    enemyGachas : conf,
 
     enemyLotteryPool: function(lotteryId){
         let pools = [];

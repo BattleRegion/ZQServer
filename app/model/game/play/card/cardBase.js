@@ -5,7 +5,7 @@ const conf = require('../../../../gameConf/files/card_basic');
 
 module.exports = {
 
-	Card: conf['Card'],
+	Card: conf,
 
     getCardInfo: function(cardID){
         for(let i = 0;i< this.Card.length;i++){

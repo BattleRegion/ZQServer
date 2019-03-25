@@ -2,7 +2,7 @@ const conf = require('../../../gameConf/files/level_basic');
 
 module.exports = {
 
-    levelBasics : conf['Level_Basic'],
+    levelBasics : conf,
 
     confByDungeonLevel: function(dId, levelM, level){
         for(let i = 0;i< this.levelBasics.length;i++){

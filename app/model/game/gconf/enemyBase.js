@@ -2,7 +2,7 @@ const conf = require('../../../gameConf/files/enemy_base');
 
 module.exports = {
 
-    enemyBases : conf['Enemy_Base'],
+    enemyBases : conf,
 
     enemy: function(enemyId){
         for(let i = 0;i< this.enemyBases.length;i++){

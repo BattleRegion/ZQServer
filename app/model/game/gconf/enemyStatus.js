@@ -2,7 +2,7 @@ const conf = require('../../../gameConf/files/enemy_status');
 
 module.exports = {
 
-    enemyStatus : conf['Enemy_Status'],
+    enemyStatus : conf,
 
     baseAttribute: function(kind){
         for(let i = 0;i< this.enemyStatus.length;i++){
