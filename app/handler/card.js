@@ -42,6 +42,23 @@ module.exports = {
         })
     },
     
+    current:function(req_p, ws) {
+        let uid = req_p.rawData.uid;
+        Player.getPlayerInfo(uid, (e,playerInfo)=>{
+            if(e){
+                BaseHandler.commonResponse(req_p, {code:e.message},ws);
+            } else {
+            		CardGacha.getCurrentCards(uid, (e, cardsInfo)=>{
+            			if(e){
+			        		BaseHandler.commonResponse(req_p, {code:e.message},ws);
+			        } else {
+			            	BaseHandler.commonResponse(req_p, {code:GameCode.SUCCESS, cardsInfo:cardsInfo},ws);
+			        }
+            		})
+            }
+        })
+    },
+    
     loot:function(req_p, ws) {
     		let uid = req_p.rawData.uid;
     		//TODO

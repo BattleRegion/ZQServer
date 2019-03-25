@@ -35,18 +35,18 @@ module.exports = {
 
     initPlayerCards: function(wxUid, gachaId, cardNum, cb) {
     		let cards_key = `${REDIS_CARDS_KEY}:${wxUid}`;
-    		Log.info(`Try to get player cards key ${cards_key}`);
+    		Log.info(`Try to get player initial cards from key ${cards_key}`);
     		
     		Executor.redisGet(DBEnv_ZQ, cards_key, (e,r)=>{
     			if(e){
-                Log.error(`getPlayerHand redis error ${e}`);
+                Log.error(`initPlayerCards redis error ${e}`);
                 cb(new Error(GameCode.REDIS_ERROR), null);
             }
             else{
                 if(r){
                     let cardsAll = JSON.parse(r);
                     if (cardsAll['handList']) {
-                    		Log.info(`getPlayerHand from redis ${r}`);
+                    		Log.info(`getInitPlayerCards from redis ${r}`);
                     		cb(null, cardsAll['handList']);
                     }
                 }
@@ -79,10 +79,10 @@ module.exports = {
                 		//Store $cardNum cards as init hand
                 		Executor.redisSet(DBEnv_ZQ, cards_key, JSON.stringify(cards), (e) => {
                 			if(e) {
-                				Log.error(`setPlayerHand redis error ${e}`);
+                				Log.error(`setInitPlayerCards redis error ${e}`);
                 				cb(new Error(GameCode.REDIS_ERROR), null);
                 			} else {
-                				Log.info('getPlayerHand and insert into redis ...');
+                				Log.info('initPlayerCards and insert into redis ...');
                 				cb(null, handList);
                 			}
                 		})
@@ -96,11 +96,11 @@ module.exports = {
 
 	drawPlayerCards: function(wxUid, discard, gachaId, cardNum, cb) {
 		let cards_key = `${REDIS_CARDS_KEY}:${wxUid}`;
-		Log.info(`Try to get player cards key ${cards_key}`);
+		Log.info(`Try to get player cards from key ${cards_key}`);
 
         Executor.redisGet(DBEnv_ZQ, cards_key, (e, r) => {
 	        	if(e) {
-	        		Log.error(`getPlayerDiscard redis error ${e}`);
+	        		Log.error(`drawPlayerCards redis error ${e}`);
 	        		cb(new Error(GameCode.REDIS_ERROR), null);
 	        	} else {
 	        		let discardList = [];
@@ -113,7 +113,7 @@ module.exports = {
 	        		}
 
 	        		let cardIdList = cardsAll['cardIdList'];
-	        		Log.info(`getPlayerCards into redis ${JSON.stringify(cardIdList)}`);
+	        		Log.info(`getDrawPlayerCards from redis ${JSON.stringify(cardIdList)}`);
 	        		if(cardIdList.length < cardNum) {
 	        			for(let i = 0; i < discardList.length; i++) {
 	        				cardIdList.push(discardList[i]);
@@ -141,10 +141,10 @@ module.exports = {
                 		cards['discardList'] = discardList;
 	        			Executor.redisSet(DBEnv_ZQ, cards_key, JSON.stringify(cards), (e) => {
 	        				if(e) {
-	        					Log.error(`setPlayerHand redis error ${e}`);
+	        					Log.error(`setDrawPlayerCards redis error ${e}`);
 	        					cb(new Error(GameCode.REDIS_ERROR), null);
 	        				} else {
-	        					Log.info('getPlayerHand and insert into redis ...');
+	        					Log.info('drawPlayerCards and insert into redis ...');
 	        					cb(null, handList);
 	        				}
 	        			})
@@ -154,5 +154,31 @@ module.exports = {
 	        		}
 	        	}
         })
+	},
+	
+	getCurrentCards: function(wxUid, cb) {
+		let cards_key = `${REDIS_CARDS_KEY}:${wxUid}`;
+		Log.info(`Try to get player current cards from key ${cards_key}`);
+		
+		Executor.redisGet(DBEnv_ZQ, cards_key, (e,r)=>{
+    			if(e){
+                Log.error(`getCurrentCards redis error ${e}`);
+                cb(new Error(GameCode.REDIS_ERROR), null);
+           	} else {
+            		if(r){
+                    let cardsAll = JSON.parse(r);
+                    let cardsPool = {};
+                    if (cardsAll['cardIdList'] && cardsAll['discardList']) {
+                    		Log.info(`getCurrentCards from redis ${r}`);
+                    		cardsPool['pool'] = cardsAll['cardIdList'];
+                    		cardsPool['discard'] = cardsAll['discardList'];
+                    }
+                    cb(null, cardsPool);
+               } else {
+               		Log.error(`No current cards found, set redis error`);
+	        			cb(new Error(GameCode.REDIS_ERROR), null);
+               }
+            }
+       	})
 	}
 }
