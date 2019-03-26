@@ -180,5 +180,26 @@ module.exports = {
                }
             }
        	})
+	},
+	
+	getLootCards: function(wxUid, lootId, levelId, gachaId, cb) {
+		if (lootId) {
+			let cards_key = `${REDIS_CARDS_KEY}:${wxUid}`;
+			Log.info(`Try to get player cards from key ${cards_key}`);
+			
+			cb(null, {});
+		} else {
+			let cards = {};
+			let cardIdList = [];
+			//Get all cards' id in the gacha by gacha id
+			for(let i = 0; i < this.CardGacha.length; i++) {
+				let gacha = this.CardGacha[i];
+				if(gacha['CARD_GACHA_ID'] === gachaId) {
+					cardIdList.push(gacha['CARD_ID']);
+				}
+			}
+			//TODO LOOT_LOOTERY intersection with $cardIdList
+			cb(null, {});
+		}
 	}
 }
