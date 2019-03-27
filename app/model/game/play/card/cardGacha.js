@@ -2,15 +2,16 @@ const DataAccess = require('dataAccess');
 const Executor = DataAccess.executor;
 const Command = DataAccess.command;
 const roleConf = require('../../../../gameConf/files/role');
+const levelConf = require('../../../../gameConf/files/level_basic');
 const cardGachaConf = require('../../../../gameConf/files/card_gacha');
 const cardConf = require('../../../../gameConf/files/card_basic');
 const REDIS_CARDS_KEY = 'ZQ_CARDS_KEY';
 
 module.exports = {
 
-	CardGacha: cardGachaConf,
+	CardGacha: cardGachaConf['Card_Gacha'],
 	
-	Card: cardConf,
+	Card: cardConf['Card'],
 	
 	CardDict: function() {
 		let dict = {};
@@ -21,7 +22,9 @@ module.exports = {
 		return dict;
 	},
 	
-	Role: roleConf,
+	Role: roleConf['Role_Basic'],
+	
+	levelBasic: levelConf['Level_Basic'],
 	
 	roleBaseGacha: function(roleId) {
 		for (let i = 0; i < this.Role.length; i++) {
@@ -43,15 +46,20 @@ module.exports = {
                 cb(new Error(GameCode.REDIS_ERROR), null);
             }
             else{
+            		let cards = {};
+                	let cardIdList = [];
+
                 if(r){
                     let cardsAll = JSON.parse(r);
                     if (cardsAll['handList']) {
                     		Log.info(`getInitPlayerCards from redis ${r}`);
                     		cb(null, cardsAll['handList']);
                     }
+                    // if has loot cards
+                    if (cardsAll['lootCard']) {
+                    		cardIdList.push(cardsAll['lootCards']);
+                    }
                 }
-                	let cards = {};
-                	let cardIdList = [];
                 	//Get all cards' id in the gacha by gacha id
                 	for(let i = 0; i < this.CardGacha.length; i++) {
                 		let gacha = this.CardGacha[i];
@@ -182,24 +190,67 @@ module.exports = {
        	})
 	},
 	
-	getLootCards: function(wxUid, lootId, levelId, gachaId, cb) {
+	getLootCards: function(wxUid, lootId, level, gachaId, cb) {
+		let cards = {};
+		let cardIdList = [];
+		let lootGacha = null;
+		let levelInfo = level.split('_');
+		
+		for (let i = 0; i < this.levelBasic.length; i++) {
+			let level = this.levelBasic[i];
+			if (level['ID'] === levelInfo[0] && level['STAGE'] === levelInfo[1] && level['STAGE_NUM'] === levelInfo[2]) {
+				lootGacha = level['LOOT_LOTTERY'];
+				break;
+			}
+		}
+		//Get all cards' id in the gacha by gacha id
+		for (let i = 0; i < this.CardGacha.length; i++) {
+			let gacha = this.CardGacha[i];
+			if (gacha['CARD_GACHA_ID'] === gachaId) {
+				cardIdList.push(gacha['CARD_ID']);
+			}
+			if (lootGacha && gacha['CARD_GACHA_ID'] === lootGacha) {
+				cardIdList.push(gacha['CARD_ID']);
+			}
+		}
 		if (lootId) {
 			let cards_key = `${REDIS_CARDS_KEY}:${wxUid}`;
-			Log.info(`Try to get player cards from key ${cards_key}`);
+			Log.info(`getLootCards: Try to get player cards from key ${cards_key}`);
 			
-			cb(null, {});
+			Executor.redisGet(DBEnv_ZQ, cards_key, (e,r)=>{
+	    			if(e){
+	                Log.error(`getLootCards: get player cards redis error ${e}`);
+	                cb(new Error(GameCode.REDIS_ERROR), null);
+	            }
+	            else{
+	                if(r){
+	                    let cardsAll = JSON.parse(r);
+	                    if (cardIdList.indexOf(lootId) >= 0 ) {
+	                    		cardsAll['lootCard'] = lootId;
+	                    		Executor.redisSet(DBEnv_ZQ, cards_key, JSON.stringify(cardsAll), (e) => {
+	                    			if(e) {
+			        					Log.error(`set lootCard into redis error ${e}`);
+			        					cb(new Error(GameCode.REDIS_ERROR), null);
+			        				} else {
+			        					Log.info(`make lootCard and insert into redis ${JSON.stringify(cardsAll)} ...`);
+			        					cb(null, true);
+			        				}
+	                    		})
+	                    } else {
+	                    		Log.error(`lootId ${JSON.stringify(lootId)} can not be found in loot cardIdList ${JSON.stringify(cardIdList)}`);
+	        					cb(new Error(GameCode.REDIS_ERROR), null);
+	                    }
+	                } else {
+	                		Log.error(`No player cards found from key ${cards_key} in redis`);
+	        				cb(new Error(GameCode.REDIS_ERROR), null);
+	                }
+	            }
+	      	})
 		} else {
-			let cards = {};
-			let cardIdList = [];
-			//Get all cards' id in the gacha by gacha id
-			for(let i = 0; i < this.CardGacha.length; i++) {
-				let gacha = this.CardGacha[i];
-				if(gacha['CARD_GACHA_ID'] === gachaId) {
-					cardIdList.push(gacha['CARD_ID']);
-				}
-			}
-			//TODO LOOT_LOOTERY intersection with $cardIdList
-			cb(null, {});
+			//Randomly get 3 loot cards from card group
+	        	let shuffledList = cardIdList.sort(() => 0.5 - Math.random());
+	        	let lootList = shuffledList.slice(0, 3);
+			cb(null, lootList);
 		}
 	}
 }

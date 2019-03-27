@@ -61,7 +61,7 @@ module.exports = {
     
     loot:function(req_p, ws) {
     		let uid = req_p.rawData.uid;
-    		let lootID = req_p.rawData.lootID;
+    		let lootId = req_p.rawData.lootId;
     		Player.getPlayerInfo(uid, (e,playerInfo)=>{
             if(e){
                 BaseHandler.commonResponse(req_p, {code:e.message},ws);
@@ -71,7 +71,7 @@ module.exports = {
                 if (!base_gacha) {
                 		BaseHandler.commonResponse(req_p, {code:`No base gacha found by role: ${play_role}`},ws);
                 }
-            		CardGacha.getLootCards(uid, lootID, playerInfo['dungeon_level'], base_gacha['BASIC_CARDGROUPID'], (e, lootInfo)=>{
+            		CardGacha.getLootCards(uid, lootId, playerInfo['dungeon_level'], base_gacha['BASIC_CARDGROUPID'], (e, lootInfo)=>{
             			if(e){
 			        		BaseHandler.commonResponse(req_p, {code:e.message},ws);
 			        } else {

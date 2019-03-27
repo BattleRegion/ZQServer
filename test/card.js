@@ -25,6 +25,17 @@ class Card extends Base {
             }
         });
     }
+    
+    loot(){
+        this.send({
+            handler:'card',
+            event:'loot',
+            rawData:{
+                token:this.userToken,
+                lootId: "200_001_10001"
+            }
+        });
+    }
 
 }
 
