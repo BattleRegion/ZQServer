@@ -59,7 +59,29 @@ module.exports = {
         })
     },
     
-    loot:function(req_p, ws) {
+    getLoot:function(req_p, ws) {
+    		let uid = req_p.rawData.uid;
+    		Player.getPlayerInfo(uid, (e,playerInfo)=>{
+            if(e){
+                BaseHandler.commonResponse(req_p, {code:e.message},ws);
+            } else {
+            		let play_role = playerInfo['role'];
+                let base_gacha = CardGacha.roleBaseGacha(play_role);
+                if (!base_gacha) {
+                		BaseHandler.commonResponse(req_p, {code:`No base gacha found by role: ${play_role}`},ws);
+                }
+            		CardGacha.getLootCards(uid, playerInfo['dungeon_level'], base_gacha['BASIC_CARDGROUPID'], (e, lootInfo)=>{
+            			if(e){
+			        		BaseHandler.commonResponse(req_p, {code:e.message},ws);
+			        } else {
+			            	BaseHandler.commonResponse(req_p, {code:GameCode.SUCCESS, lootInfo:lootInfo},ws);
+			        }
+            		})
+            }
+        })
+    },
+    
+    setLoot:function(req_p, ws) {
     		let uid = req_p.rawData.uid;
     		let lootId = req_p.rawData.lootId;
     		Player.getPlayerInfo(uid, (e,playerInfo)=>{
@@ -71,11 +93,11 @@ module.exports = {
                 if (!base_gacha) {
                 		BaseHandler.commonResponse(req_p, {code:`No base gacha found by role: ${play_role}`},ws);
                 }
-            		CardGacha.getLootCards(uid, lootId, playerInfo['dungeon_level'], base_gacha['BASIC_CARDGROUPID'], (e, lootInfo)=>{
+            		CardGacha.setLootCards(uid, lootId, playerInfo['dungeon_level'], base_gacha['BASIC_CARDGROUPID'], (e, success)=>{
             			if(e){
 			        		BaseHandler.commonResponse(req_p, {code:e.message},ws);
 			        } else {
-			            	BaseHandler.commonResponse(req_p, {code:GameCode.SUCCESS, lootInfo:lootInfo},ws);
+			            	BaseHandler.commonResponse(req_p, {code:GameCode.SUCCESS, success:success},ws);
 			        }
             		})
             }

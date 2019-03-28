@@ -11,7 +11,7 @@ class Card extends Base {
             event:'draw',
             rawData:{
                 token:this.userToken,
-                discard:['200_001_10002']
+                discard:null
             }
         });
     }
@@ -26,10 +26,20 @@ class Card extends Base {
         });
     }
     
-    loot(){
+	getLoot(){
         this.send({
             handler:'card',
-            event:'loot',
+            event:'getLoot',
+            rawData:{
+                token:this.userToken
+            }
+        });
+    }    
+
+    setLoot(){
+        this.send({
+            handler:'card',
+            event:'setLoot',
             rawData:{
                 token:this.userToken,
                 lootId: "200_001_10001"

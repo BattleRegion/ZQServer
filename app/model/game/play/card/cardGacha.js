@@ -190,7 +190,37 @@ module.exports = {
        	})
 	},
 	
-	getLootCards: function(wxUid, lootId, level, gachaId, cb) {
+	getLootCards: function(wxUid, level, gachaId, cb) {
+		let cards = {};
+		let cardIdList = [];
+		let lootGacha = null;
+		let levelInfo = level.split('_');
+		
+		for (let i = 0; i < this.levelBasic.length; i++) {
+			let level = this.levelBasic[i];
+			if (level['ID'] === levelInfo[0] && level['STAGE'] === levelInfo[1] && level['STAGE_NUM'] === levelInfo[2]) {
+				lootGacha = level['LOOT_LOTTERY'];
+				break;
+			}
+		}
+		//Get all cards' id in the gacha by gacha id
+		for (let i = 0; i < this.CardGacha.length; i++) {
+			let gacha = this.CardGacha[i];
+			if (gacha['CARD_GACHA_ID'] === gachaId) {
+				cardIdList.push(gacha['CARD_ID']);
+			}
+			if (lootGacha && gacha['CARD_GACHA_ID'] === lootGacha) {
+				cardIdList.push(gacha['CARD_ID']);
+			}
+		}
+		
+		//Randomly get 3 loot cards from card group
+	    	let shuffledList = cardIdList.sort(() => 0.5 - Math.random());
+	    let lootList = shuffledList.slice(0, 3);
+		cb(null, lootList);
+	},
+	
+	setLootCards: function(wxUid, lootId, level, gachaId, cb) {
 		let cards = {};
 		let cardIdList = [];
 		let lootGacha = null;
@@ -215,11 +245,11 @@ module.exports = {
 		}
 		if (lootId) {
 			let cards_key = `${REDIS_CARDS_KEY}:${wxUid}`;
-			Log.info(`getLootCards: Try to get player cards from key ${cards_key}`);
+			Log.info(`setLootCards: Try to get player cards from key ${cards_key}`);
 			
 			Executor.redisGet(DBEnv_ZQ, cards_key, (e,r)=>{
 	    			if(e){
-	                Log.error(`getLootCards: get player cards redis error ${e}`);
+	                Log.error(`setLootCards: get player cards redis error ${e}`);
 	                cb(new Error(GameCode.REDIS_ERROR), null);
 	            }
 	            else{
@@ -246,11 +276,6 @@ module.exports = {
 	                }
 	            }
 	      	})
-		} else {
-			//Randomly get 3 loot cards from card group
-	        	let shuffledList = cardIdList.sort(() => 0.5 - Math.random());
-	        	let lootList = shuffledList.slice(0, 3);
-			cb(null, lootList);
 		}
 	}
 }
