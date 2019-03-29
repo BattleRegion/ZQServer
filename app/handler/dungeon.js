@@ -2,6 +2,7 @@ const DataAccess = require('dataAccess');
 const Command = DataAccess.command;
 const Executor = DataAccess.executor;
 const Player = require('../model/game/play/player');
+const CardGacha = require('../model/game/play/card/cardGacha');
 const LevelBasic = require('../model/game/gconf/levelBasic');
 const EnemyGacha = require('../model/game/gconf/enemyGacha');
 const EnemyBase = require('../model/game/gconf/enemyBase');
@@ -143,6 +144,19 @@ module.exports = {
                                     BaseHandler.commonResponse(req_p, {code:GameCode.DB_ERROR},ws);
                                 }
                                 else{
+                                		//更新dungeon_level前生成loot卡牌堆
+                                		let lootInfo = {};
+                                		let base_gacha = CardGacha.roleBaseGacha(playerInfo['role']);
+                                		if (!base_gacha) {
+					                		BaseHandler.commonResponse(req_p, {code:`No base gacha found when get loot cards by role: ${play_role}`},ws);
+					                }
+                                		CardGacha.getLootCards(uid, playerInfo['dungeon_level'], base_gacha['BASIC_CARDGROUPID'], (e, lootInfo)=>{
+					            			if(e){
+								        		BaseHandler.commonResponse(req_p, {code:e.message},ws);
+								        } else {
+								            	lootInfo = lootInfo;
+								        }
+					            		})
                                     //更新缓存
                                     playerInfo.dungeon_level = nextDungeonLevel;
                                     if(!hasNext || quit){
@@ -154,7 +168,7 @@ module.exports = {
                                             BaseHandler.commonResponse(req_p, {code:GameCode.REDIS_ERROR},ws);
                                         }
                                         else{
-                                            BaseHandler.commonResponse(req_p, {code:GameCode.SUCCESS, hasNext:hasNext},ws);
+                                            BaseHandler.commonResponse(req_p, {code:GameCode.SUCCESS, hasNext:hasNext, lootInfo:lootInfo},ws);
                                         }
                                     })
                                 }

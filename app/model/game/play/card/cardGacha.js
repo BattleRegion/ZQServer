@@ -220,62 +220,32 @@ module.exports = {
 		cb(null, lootList);
 	},
 	
-	setLootCards: function(wxUid, lootId, level, gachaId, cb) {
-		let cards = {};
-		let cardIdList = [];
-		let lootGacha = null;
-		let levelInfo = level.split('_');
-		
-		for (let i = 0; i < this.levelBasic.length; i++) {
-			let level = this.levelBasic[i];
-			if (level['ID'] === levelInfo[0] && level['STAGE'] === levelInfo[1] && level['STAGE_NUM'] === levelInfo[2]) {
-				lootGacha = level['LOOT_LOTTERY'];
-				break;
-			}
-		}
-		//Get all cards' id in the gacha by gacha id
-		for (let i = 0; i < this.CardGacha.length; i++) {
-			let gacha = this.CardGacha[i];
-			if (gacha['CARD_GACHA_ID'] === gachaId) {
-				cardIdList.push(gacha['CARD_ID']);
-			}
-			if (lootGacha && gacha['CARD_GACHA_ID'] === lootGacha) {
-				cardIdList.push(gacha['CARD_ID']);
-			}
-		}
-		if (lootId) {
-			let cards_key = `${REDIS_CARDS_KEY}:${wxUid}`;
-			Log.info(`setLootCards: Try to get player cards from key ${cards_key}`);
+	setLootCards: function(wxUid, lootId, gachaId, cb) {
+		let cards_key = `${REDIS_CARDS_KEY}:${wxUid}`;
+		Log.info(`setLootCards: Try to get player cards from key ${cards_key}`);
 			
-			Executor.redisGet(DBEnv_ZQ, cards_key, (e,r)=>{
-	    			if(e){
-	                Log.error(`setLootCards: get player cards redis error ${e}`);
-	                cb(new Error(GameCode.REDIS_ERROR), null);
-	            }
-	            else{
-	                if(r){
-	                    let cardsAll = JSON.parse(r);
-	                    if (cardIdList.indexOf(lootId) >= 0 ) {
-	                    		cardsAll['lootCard'] = lootId;
-	                    		Executor.redisSet(DBEnv_ZQ, cards_key, JSON.stringify(cardsAll), (e) => {
-	                    			if(e) {
-			        					Log.error(`set lootCard into redis error ${e}`);
-			        					cb(new Error(GameCode.REDIS_ERROR), null);
-			        				} else {
-			        					Log.info(`make lootCard and insert into redis ${JSON.stringify(cardsAll)} ...`);
-			        					cb(null, true);
-			        				}
-	                    		})
-	                    } else {
-	                    		Log.error(`lootId ${JSON.stringify(lootId)} can not be found in loot cardIdList ${JSON.stringify(cardIdList)}`);
-	        					cb(new Error(GameCode.REDIS_ERROR), null);
-	                    }
-	                } else {
-	                		Log.error(`No player cards found from key ${cards_key} in redis`);
-	        				cb(new Error(GameCode.REDIS_ERROR), null);
-	                }
-	            }
-	      	})
-		}
+		Executor.redisGet(DBEnv_ZQ, cards_key, (e, r) => {
+			if(e) {
+				Log.error(`setLootCards: get player cards redis error ${e}`);
+				cb(new Error(GameCode.REDIS_ERROR), null);
+			} else {
+				if(r) {
+					let cardsAll = JSON.parse(r);
+					cardsAll['lootCard'] = lootId;
+					Executor.redisSet(DBEnv_ZQ, cards_key, JSON.stringify(cardsAll), (e) => {
+						if(e) {
+							Log.error(`set lootCard into redis error ${e}`);
+							cb(new Error(GameCode.REDIS_ERROR), null);
+						} else {
+							Log.info(`make lootCard and insert into redis ${JSON.stringify(cardsAll)} ...`);
+							cb(null, true);
+						}
+					})
+				} else {
+					Log.error(`No player cards found from key ${cards_key} in redis`);
+					cb(new Error(GameCode.REDIS_ERROR), null);
+				}
+			}
+		})
 	}
 }
