@@ -134,3 +134,20 @@ UNLOCK TABLES;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
 -- Dump completed on 2019-03-04 23:56:45
+
+
+DROP TABLE IF EXISTS `player_avatar`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `player_avatar` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `wx_uid` varchar(128) NOT NULL DEFAULT '',
+  `weapon` int(11) DEFAULT '0',
+  `deputy` int(11) DEFAULT '0',
+  `head` int(11) DEFAULT '0',
+  `body` int(11) DEFAULT '0',
+  `createAt` varchar(10) NOT NULL DEFAULT '',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `wx_uid` (`wx_uid`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
