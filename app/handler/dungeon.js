@@ -104,7 +104,6 @@ module.exports = {
     finishLevel: function (req_p, ws) {
         let uid = req_p.rawData.uid;
         let dungeonId = req_p.rawData.dungeonId;
-        // let quit = req_p.rawData.quit;
         let result = req_p.rawData.result;
         let sql = new Command('select * from dungeon where id = ? and finishAt is null and uid = ?', [dungeonId, uid]);
         Executor.query(DBEnv_ZQ, sql, (e, r) => {
@@ -135,38 +134,39 @@ module.exports = {
                             }
                             let sql = new Command('update dungeon set finishAt = ?,state = ? where id = ? and finishAt is null', [cur, result, dungeonId]);
                             sqls.push(sql);
-                            if(hasNext && result === 1){
+                            if(result === 1 && hasNext){
                                 let sql1 = new Command('update player set dungeon_level = ? where wx_uid = ?', [nextDungeonLevel, uid]);
                                 sqls.push(sql1);
                             }
-                            else{
-                                let sql1 = new Command('update player set dungeon_role = null where wx_uid = ?', [uid]);
+                            else if(result === 2){
+                                let temp = "1_1_1";
+                                let sql1 = new Command('update player set dungeon_role = null, dungeon_level = ? where wx_uid = ?', [uid,temp]);
                                 sqls.push(sql1);
                             }
+                            else if(result === 3){
+                                //退出啥都不干，再进来就是当前的role 状态和 level 层数
+                            }
+
                             Executor.transaction(DBEnv_ZQ, sqls, (e, r) => {
                                 if (e) {
                                     Log.error(`finishLevel db error ${e}`);
                                     BaseHandler.commonResponse(req_p, {code: GameCode.DB_ERROR}, ws);
                                 }
-                                else{
-                                		//更新dungeon_level前生成loot卡牌堆
-                                		let lootInfo = [];
-                                		let playerRole = playerInfo['role'];
-                                		let base_gacha = CardGacha.roleBaseGacha(playerRole);
-                                		if (!base_gacha) {
-					                		BaseHandler.commonResponse(req_p, {code:`No base gacha found when get loot cards by role: ${playerRole}`},ws);
-					                }
-                                		CardGacha.getLootCards(uid, playerInfo['dungeon_level'], base_gacha['BASIC_CARDGROUPID'], (e, lootInfo)=>{
-					            			if(e){
-								        		BaseHandler.commonResponse(req_p, {code:e.message},ws);
-								        } else {
-								            	lootInfo = lootInfo;
-								        }
-					            		})
-                                    //更新缓存
-                                    playerInfo.dungeon_level = nextDungeonLevel;
-                                    if (!hasNext || quit) {
+                                else {
+                                    let lootInfo = [];
+                                    if(result === 1){
+                                        //胜利才掉落
+                                        lootInfo = this.lootFunc(playerInfo);
+                                        if(hasNext){
+                                            playerInfo.dungeon_level = nextDungeonLevel;
+                                        }
+                                    }
+                                    else if(result === 2){
+                                        playerInfo.dungeon_level = "1_1_1";
                                         playerInfo.dungeon_role = null;
+                                    }
+                                    else if(result === 3){
+                                        //退出啥都不干
                                     }
                                     Player.refreshCachePlayerInfo(playerInfo, e => {
                                         if (e) {
@@ -177,7 +177,8 @@ module.exports = {
                                             BaseHandler.commonResponse(req_p, {
                                                 code: GameCode.SUCCESS,
                                                 hasNext: hasNext,
-                                                lootInfo: lootInfo
+                                                lootInfo: lootInfo,
+                                                result:result
                                             }, ws);
                                         }
                                     })
@@ -192,6 +193,18 @@ module.exports = {
                 }
             }
         });
+    },
+
+    lootFunc: function(playerInfo){
+        let playerRole = playerInfo['role'];
+        let base_gacha = CardGacha.roleBaseGacha(playerRole);
+        if (!base_gacha) {
+            Log.info( `No base gacha found when get loot cards by role: ${playerRole}`);
+            return [];
+        }
+        else{
+            return CardGacha.getLootCards(uid, playerInfo['dungeon_level'], base_gacha['BASIC_CARDGROUPID']);
+        }
     },
 
     createLevelEnemies: function (curLevelBasic, uid, req_p, ws) {

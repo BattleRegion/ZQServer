@@ -190,7 +190,7 @@ module.exports = {
        	})
 	},
 	
-	getLootCards: function(wxUid, level, gachaId, cb) {
+	getLootCards: function(wxUid, level, gachaId) {
 		let cards = {};
 		let cardIdList = [];
 		let lootGacha = null;
@@ -215,9 +215,9 @@ module.exports = {
 		}
 		
 		//Randomly get 3 loot cards from card group
-	    	let shuffledList = cardIdList.sort(() => 0.5 - Math.random());
+	    let shuffledList = cardIdList.sort(() => 0.5 - Math.random());
 	    let lootList = shuffledList.slice(0, 3);
-		cb(null, lootList);
+		return lootList;
 	},
 	
 	setLootCards: function(wxUid, lootId, gachaId, cb) {
