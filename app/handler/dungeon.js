@@ -99,6 +99,7 @@ module.exports = {
         let uid = req_p.rawData.uid;
         let dungeonId = req_p.rawData.dungeonId;
         let quit = req_p.rawData.quit;
+        let result = req_p.rawData.result;
         let sql = new Command('select * from dungeon where id = ? and finishAt is null and uid = ?',[dungeonId, uid]);
         Executor.query(DBEnv_ZQ, sql ,(e,r)=>{
             if(e){
@@ -126,10 +127,10 @@ module.exports = {
                                 Log.info(`用户 ${uid} 已经完成了所有关卡！${d_level_info}`);
                                 hasNext = false;
                             }
-                            let sql = new Command('update dungeon set finishAt = ?,state = 1 where id = ? and finishAt is null',[cur, dungeonId]);
+                            let sql = new Command('update dungeon set finishAt = ?,state = ? where id = ? and finishAt is null',[cur, result ,dungeonId]);
                             sqls.push(sql);
                             if(!hasNext || quit){
-                                let sql1 = new Command('update player set dungeon_level = ?, dungeon_role = null where wx_uid = ?',[nextDungeonLevel, uid]);
+                                let sql1 = new Command('update player set dungeon_role = null where wx_uid = ?',[uid]);
                                 sqls.push(sql1);
                             }
                             else{
