@@ -145,10 +145,11 @@ module.exports = {
                                 }
                                 else{
                                 		//更新dungeon_level前生成loot卡牌堆
-                                		let lootInfo = {};
-                                		let base_gacha = CardGacha.roleBaseGacha(playerInfo['role']);
+                                		let lootInfo = [];
+                                		let playerRole = playerInfo['role'];
+                                		let base_gacha = CardGacha.roleBaseGacha(playerRole);
                                 		if (!base_gacha) {
-					                		BaseHandler.commonResponse(req_p, {code:`No base gacha found when get loot cards by role: ${play_role}`},ws);
+					                		BaseHandler.commonResponse(req_p, {code:`No base gacha found when get loot cards by role: ${playerRole}`},ws);
 					                }
                                 		CardGacha.getLootCards(uid, playerInfo['dungeon_level'], base_gacha['BASIC_CARDGROUPID'], (e, lootInfo)=>{
 					            			if(e){
