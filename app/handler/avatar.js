@@ -42,6 +42,25 @@ module.exports = {
             }
         })
     },
+    //获取装备列表
+    getAvatarList:function(req_p, ws){
+        let uid = req_p.rawData.uid;
+        Player.getPlayerInfo(uid, (e,playerInfo)=>{
+            if(e){
+                BaseHandler.commonResponse(req_p, {code:e.message},ws);
+            }
+            else{
+                AvatarBase.getAvatarList((e,avatarList)=>{
+                    if(e){
+                        BaseHandler.commonResponse(req_p, {code:e.message},ws);
+                    }
+                    else{
+                        BaseHandler.commonResponse(req_p, {code:GameCode.SUCCESS, avatarList:avatarList},ws);
+                    }
+                })
+            }
+        })
+    },
     //获取角色装备
     getPlayerAvatar:function(req_p, ws){
         let uid = req_p.rawData.uid;

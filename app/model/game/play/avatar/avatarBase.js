@@ -31,6 +31,9 @@ module.exports = {
             }
         }
     },
+    getAvatarList: function(cb){
+        cb(null,this.Avatar.Avatar)
+    },
     getPlayerAvatar:function(wxUid,cb){
         let sql = new Command('select * from player_avatar where wx_uid = ?', [wxUid]);
         Executor.query(DBEnv_ZQ, sql ,(e,r)=>{
