@@ -24,8 +24,23 @@ module.exports = {
 
     //获取装备信息
     getAvatarInfo:function(req_p, ws){
+        let uid = req_p.rawData.uid;
         let avatarId = req_p.rawData.avatarId;
-        return AvatarBase.getAvatarInfo(avatarId)
+        Player.getPlayerInfo(uid, (e,playerInfo)=>{
+            if(e){
+                BaseHandler.commonResponse(req_p, {code:e.message},ws);
+            }
+            else{
+                AvatarBase.getAvatarInfo(avatarId,(e,avatarInfo)=>{
+                    if(e){
+                        BaseHandler.commonResponse(req_p, {code:e.message},ws);
+                    }
+                    else{
+                        BaseHandler.commonResponse(req_p, {code:GameCode.SUCCESS, avatarInfo:avatarInfo},ws);
+                    }
+                })
+            }
+        })
     },
     //获取角色装备
     getPlayerAvatar:function(req_p, ws){
@@ -35,11 +50,11 @@ module.exports = {
                 BaseHandler.commonResponse(req_p, {code:e.message},ws);
             }
             else{
-                AvatarBase.getPlayerAvatar(uid,(e, handInfo)=>{
+                AvatarBase.getPlayerAvatar(uid,(e, playerAvatar)=>{
                     if(e){
                         BaseHandler.commonResponse(req_p, {code:e.message},ws);
                     } else {
-                        BaseHandler.commonResponse(req_p, {code:GameCode.SUCCESS, handInfo:handInfo},ws);
+                        BaseHandler.commonResponse(req_p, {code:GameCode.SUCCESS, playerAvatar:playerAvatar},ws);
                     }
                 })
             }
@@ -55,11 +70,11 @@ module.exports = {
                 BaseHandler.commonResponse(req_p, {code:e.message},ws);
             }
             else{
-                AvatarBase.equip(uid,avatarId,(e, handInfo)=>{
+                AvatarBase.equip(uid,avatarId,(e, success)=>{
                     if(e){
                         BaseHandler.commonResponse(req_p, {code:e.message},ws);
                     } else {
-                        BaseHandler.commonResponse(req_p, {code:GameCode.SUCCESS, handInfo:handInfo},ws);
+                        BaseHandler.commonResponse(req_p, {code:GameCode.SUCCESS, success:success},ws);
                     }
                 })
             }

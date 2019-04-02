@@ -151,3 +151,4 @@ CREATE TABLE `player_avatar` (
   UNIQUE KEY `wx_uid` (`wx_uid`)
 ) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
+insert into player_avatar values ('1','oQWQQ5SM04moIxt13PqmTqx0fN6Y','1','1','1','1','')
