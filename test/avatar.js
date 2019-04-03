@@ -12,7 +12,7 @@ class Avatar extends Base {
             event:'getAvatarInfo',
             rawData:{
                 token:this.userToken,
-                avatarId:"1"
+                avatarId:"700_001_10001"
             }
         });
     }
@@ -47,7 +47,7 @@ class Avatar extends Base {
             event:'equip',
             rawData:{
                 token:this.userToken,
-                avatarId:"1"
+                avatarId:"700_001_10001"
             }
         });
     }
