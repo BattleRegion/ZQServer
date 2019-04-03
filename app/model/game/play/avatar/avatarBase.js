@@ -1,4 +1,4 @@
-const conf = require('../../../../gameConf/files/avatar_base');
+const conf = require('../../../../gameConf/files/item_basic');
 const DataAccess = require('dataAccess');
 const Executor = DataAccess.executor;
 const Command = DataAccess.command;
@@ -15,8 +15,8 @@ module.exports = {
     Avatar: conf,
 
     getAvatar:function(avatarId){
-        for(let i = 0;i< this.Avatar.Avatar.length;i++){
-            let avatar = this.Avatar.Avatar[i];
+        for(let i = 0;i< this.Avatar.length;i++){
+            let avatar = this.Avatar[i];
             if(avatar['ID'] === avatarId){
                 return avatar
             }
@@ -24,15 +24,15 @@ module.exports = {
     },
 
     getAvatarInfo: function(avatarId,cb){
-        for(let i = 0;i< this.Avatar.Avatar.length;i++){
-            let avatar = this.Avatar.Avatar[i];
+        for(let i = 0;i< this.Avatar.length;i++){
+            let avatar = this.Avatar[i];
             if(avatar['ID'] === avatarId){
                 cb(null,avatar)
             }
         }
     },
     getAvatarList: function(cb){
-        cb(null,this.Avatar.Avatar)
+        cb(null,this.Avatar)
     },
     getPlayerAvatar:function(wxUid,cb){
         let sql = new Command('select * from player_avatar where wx_uid = ?', [wxUid]);
