@@ -34,6 +34,13 @@ module.exports = {
     getAvatarList: function(cb){
         cb(null,this.Avatar)
     },
+    getAvatarIdList: function(cb){
+        let ids = []
+        for(let i = 0;i< this.Avatar.length;i++){
+            ids.push(this.Avatar[i].ID)
+        }
+        cb(null,ids)
+    },
     getPlayerAvatar:function(wxUid,cb){
         let sql = new Command('select * from player_avatar where wx_uid = ?', [wxUid]);
         Executor.query(DBEnv_ZQ, sql ,(e,r)=>{

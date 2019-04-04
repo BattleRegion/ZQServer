@@ -50,7 +50,7 @@ module.exports = {
                 BaseHandler.commonResponse(req_p, {code:e.message},ws);
             }
             else{
-                AvatarBase.getAvatarList((e,avatarList)=>{
+                AvatarBase.getAvatarIdList((e,avatarList)=>{
                     if(e){
                         BaseHandler.commonResponse(req_p, {code:e.message},ws);
                     }
