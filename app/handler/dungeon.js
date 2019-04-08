@@ -203,7 +203,7 @@ module.exports = {
             return [];
         }
         else{
-            return CardGacha.getLootCards(uid, playerInfo['dungeon_level'], base_gacha['BASIC_CARDGROUPID']);
+            return CardGacha.getLootCards(playerInfo['dungeon_level'], base_gacha['BASIC_CARDGROUPID']);
         }
     },
 

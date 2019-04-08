@@ -190,7 +190,7 @@ module.exports = {
        	})
 	},
 	
-	getLootCards: function(wxUid, level, gachaId) {
+	getLootCards: function(level, gachaId) {
 		let cards = {};
 		let cardIdList = [];
 		let lootGacha = null;
