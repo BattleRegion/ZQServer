@@ -192,6 +192,8 @@ module.exports = {
 	
 	getLootCards: function(level, gachaId) {
 		let cards = {};
+		let playerRoundCards = [];
+		let levelLootCards = [];
 		let cardIdList = [];
 		let lootGacha = null;
 		let levelInfo = level.split('_');
@@ -207,13 +209,18 @@ module.exports = {
 		for (let i = 0; i < this.CardGacha.length; i++) {
 			let gacha = this.CardGacha[i];
 			if (gacha['CARD_GACHA_ID'] === gachaId) {
-				cardIdList.push(gacha['CARD_ID']);
+				playerRoundCards.push(gacha['CARD_ID']);
 			}
 			if (lootGacha && gacha['CARD_GACHA_ID'] === lootGacha) {
-				cardIdList.push(gacha['CARD_ID']);
+				levelLootCards.push(gacha['CARD_ID']);
 			}
 		}
 		
+		let aSet = new Set(playerRoundCards);
+		let bSet = new Set(levelLootCards);
+		let cSet = new Set([...aSet].filter(x => bSet.has(x)));
+		cardIdList = [...cSet];
+
 		//Randomly get 3 loot cards from card group
 	    let shuffledList = cardIdList.sort(() => 0.5 - Math.random());
 	    let lootList = shuffledList.slice(0, 3);
@@ -223,6 +230,11 @@ module.exports = {
 	setLootCards: function(wxUid, lootId, gachaId, cb) {
 		let cards_key = `${REDIS_CARDS_KEY}:${wxUid}`;
 		Log.info(`setLootCards: Try to get player cards from key ${cards_key}`);
+
+		if (!lootId) {
+			Log.info('No loot card is selected.');
+			return false;
+		}
 			
 		Executor.redisGet(DBEnv_ZQ, cards_key, (e, r) => {
 			if(e) {
