@@ -93,7 +93,8 @@ module.exports = {
                     BaseHandler.commonResponse(req_p, {code: `No base gacha found by role: ${play_role}`}, ws);
                 }
                 else{
-                    CardGacha.setLootCards(uid, lootId, playerInfo['dungeon_level'], base_gacha['BASIC_CARDGROUPID'], (e, success) => {
+                    //, playerInfo['dungeon_level']
+                    CardGacha.setLootCards(uid, lootId, base_gacha['BASIC_CARDGROUPID'], (e, success) => {
                         if (e) {
                             BaseHandler.commonResponse(req_p, {code: e.message}, ws);
                         } else {
