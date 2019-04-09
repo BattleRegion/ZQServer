@@ -258,7 +258,7 @@ module.exports = {
                 break;
             }
         }
-        let enemyIDS = resultEL['ENEMY_ID'].split('\r\n');
+        let enemyIDS = resultEL['ENEMY_ID'].split('#');
         let enemyPoses = curLevelBasic['MONSTER_POSITION'] ? curLevelBasic['MONSTER_POSITION'].split('#') : [];
         Log.info(`随机数为 ${random} monster 抽取结果为 ${JSON.stringify(resultEL)} 怪物ID 为 ${enemyIDS} 可选位置为 ${enemyPoses}`);
         let enemies = [];
