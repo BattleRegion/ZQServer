@@ -105,6 +105,8 @@ module.exports = {
         let uid = req_p.rawData.uid;
         let dungeonId = req_p.rawData.dungeonId;
         let result = req_p.rawData.result;
+        let levelDamage = req_p.rawData.levelDamage;
+        let levelRounds = req_p.rawData.levelRounds;
         let sql = new Command('select * from dungeon where id = ? and finishAt is null and uid = ?', [dungeonId, uid]);
         Executor.query(DBEnv_ZQ, sql, (e, r) => {
             if (e) {
@@ -155,6 +157,8 @@ module.exports = {
                                 else {
                                     let lootInfo = [];
                                     if(result === 1){
+                                    		//比较本层平均伤害
+                                    		Player.comparePlayerLevelDamage(uid,playerInfo['dungeon_level'],levelRounds,levelDamage);
                                         //胜利才掉落
                                         lootInfo = this.lootFunc(playerInfo);
                                         if(hasNext){

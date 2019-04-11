@@ -88,5 +88,44 @@ module.exports = {
             }
             cb&&cb(e);
         })
-    }
+    },
+    
+    //获取用户关卡层伤害
+    comparePlayerLevelDamage: function(wxUid, level, rounds, damage){
+    		let rounds = parseInt(rounds);
+        let sql  = new Command('select * from player_damage where wx_uid=? and level=?',[wxUid, level]);
+        Executor.query(DBEnv_ZQ, sql, (e,r)=> {
+			if(e) {
+				Log.error(`getPlayerLevelDamage db error ${se}`);
+				cb(new Error(GameCode.DB_ERROR), null);
+			} else {
+				if(r[0]) {
+					let playerInfo = r[0];
+					let thisDamage = Math.round(damage/rounds);
+					if(thisDamage > playerInfo['avg_damage']) {
+						let gtSql  = new Command('update player_damage set avg_damage=?, createAt=? where wx_uid=? and level=?) values(?,?,?,?,?)',[thisDamage,~~(new Date().getTime()/1000),wxUid,level]);
+						Executor.query(DBEnv_ZQ, gtSql, (e,r)=> {
+							if(e) {
+								Log.error(`update player damage db error ${se}`);
+								cb(new Error(GameCode.DB_ERROR), null);
+							} else {
+								return true;
+							}
+						})
+					}
+				} else {
+					let playerDamage = Math.round(damage/rounds);
+					let iSql  = new Command('insert into player_damage(wx_uid,level,rounds,avg_damage,createAt) values(?,?,?,?,?)',[wxUid,level,rounds,playerDamage,~~(new Date().getTime()/1000)]);
+					Executor.query(DBEnv_ZQ, iSql, (e, r) => {
+						if(e) {
+							Log.error(`insert player damage db error ${se}`);
+							cb(new Error(GameCode.DB_ERROR), null);
+						} else {
+							return true;
+						}
+					})
+				}
+			}
+		})
+    },
 };
