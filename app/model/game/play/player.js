@@ -97,7 +97,7 @@ module.exports = {
         Executor.query(DBEnv_ZQ, sql, (e,r)=> {
 			if(e) {
 				Log.error(`getPlayerLevelDamage db error ${se}`);
-				cb(new Error(GameCode.DB_ERROR), null);
+				return new Error(GameCode.DB_ERROR);
 			} else {
 				if(r[0]) {
 					let playerInfo = r[0];
@@ -107,7 +107,7 @@ module.exports = {
 						Executor.query(DBEnv_ZQ, gtSql, (e,r)=> {
 							if(e) {
 								Log.error(`update player damage db error ${se}`);
-								cb(new Error(GameCode.DB_ERROR), null);
+								return new Error(GameCode.DB_ERROR);
 							} else {
 								return true;
 							}
@@ -119,7 +119,7 @@ module.exports = {
 					Executor.query(DBEnv_ZQ, iSql, (e, r) => {
 						if(e) {
 							Log.error(`insert player damage db error ${se}`);
-							cb(new Error(GameCode.DB_ERROR), null);
+							return new Error(GameCode.DB_ERROR);
 						} else {
 							return true;
 						}
