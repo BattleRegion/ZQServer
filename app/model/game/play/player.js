@@ -93,6 +93,7 @@ module.exports = {
     //获取用户关卡层伤害
     comparePlayerLevelDamage: function(wxUid, level, rounds, damage){
     		let rounds = parseInt(rounds);
+    		//取出用户所有关卡所有层的伤害条目
         let sql  = new Command('select * from player_damage where wx_uid=?',[wxUid]);
         Executor.query(DBEnv_ZQ, sql, (e,r)=> {
 			if(e) {
@@ -100,29 +101,54 @@ module.exports = {
 				return new Error(GameCode.DB_ERROR);
 			} else {
 				if(r) {
+					let findLevelDamageChange = false;
 					let findLevelDamage = false;
+					//用户当前关卡
+					let currentDungeon = level.split('_')[0];
+					let totalDamage = 0;
+					let plus = 0;
 					for (let i = 0; i < r.length; i++) {
 						let piece = r[i];
+						if(piece['level'].split('_')[0] == currentDungeon) {
+							//计算当前关卡各层平均伤害总和
+							totalDamage += piece['avg_damage'];
+							plus += 1;
+						}
 						if(piece['level'] == level) {
-							let playerInfo = piece;
 							let thisDamage = Math.round(damage/rounds);
-							if(thisDamage > playerInfo['avg_damage']) {
-								let gtSql  = new Command('update player_damage set avg_damage=?, createAt=? where wx_uid=? and level=?) values(?,?,?,?,?)',[thisDamage,~~(new Date().getTime()/1000),wxUid,level]);
+							if(thisDamage > piece['avg_damage']) {
+								//当前层平均伤害高于原来记录的当前层平均伤害，则覆盖
+								let gtSql  = new Command('update player_damage set avg_damage=?, createAt=? where wx_uid=? and level=?',[thisDamage,~~(new Date().getTime()/1000),wxUid,level]);
 								Executor.query(DBEnv_ZQ, gtSql, (e,r)=> {
 									if(e) {
 										Log.error(`update player damage db error ${se}`);
 										return new Error(GameCode.DB_ERROR);
 									} else {
-										findLevelDamage = true;
-										break;
+										findLevelDamageChange = true;
+										//计算当前关卡各层伤害总和时需要更新当前层平均伤害
+										totalDamage = totalDamage - piece['avg_damage'] + thisDamage;
+										plus -= 1;
 									}
 								})
 							}
+							findLevelDamage = true;
 						}
 					}
-					if(findLevelDamage) {
-						console.log(1);
-					} else {
+					let dungeonAvgDamage = Math.round(totalDamage/plus);
+					//当前层平均伤害高于原来记录的当前层平均伤害，则需要更新用户当前关卡的总平均伤害
+					if(findLevelDamageChange) {
+						let dSql  = new Command('insert into dungeon_damage(wx_uid,dungeon,round_damage,createAt) values(?,?,?,?) ON DUPLICATE KEY UPDATE round_damage=?',[wxUid,currentDungeon,dungeonAvgDamage,~~(new Date().getTime()/1000),dungeonAvgDamage]);
+						Executor.query(DBEnv_ZQ, dSql, (e, r) => {
+							if(e) {
+								Log.error(`insert dungeon damage db error ${se}`);
+								return new Error(GameCode.DB_ERROR);
+							} else {
+								return true;
+							}
+						})
+					}
+					//数据库中没找到当前关卡当前层平均伤害，则插入
+					if(!findLevelDamage){
 						let playerDamage = Math.round(damage/rounds);
 						let iSql  = new Command('insert into player_damage(wx_uid,level,rounds,avg_damage,createAt) values(?,?,?,?,?)',[wxUid,level,rounds,playerDamage,~~(new Date().getTime()/1000)]);
 						Executor.query(DBEnv_ZQ, iSql, (e, r) => {
