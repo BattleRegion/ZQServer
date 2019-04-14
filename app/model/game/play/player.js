@@ -31,7 +31,7 @@ module.exports = {
                                 }
                                 else{
                                     let dbPlayer = sr[0];
-                                    let playerAvatar = {weapon:dbPlayer['weapon'],deputy:dbPlayer['deputy'],head:dbPlayer['head'],body:dbPlayer['body']}
+                                    let playerAvatar = {'1':dbPlayer['weapon'],'2':dbPlayer['deputy'],'3':dbPlayer['head'],'4':dbPlayer['body']}
                                     let userInfo = {
                                         uid: dbPlayer['id'],
                                         wx_uid: dbPlayer['wx_uid'],
@@ -60,7 +60,7 @@ module.exports = {
                                 dungeon_level:'1_1_1',
                                 role:1,
                                 dungeon_role:null,
-                                avatar:{weapon: '700_001_10000',head: '700_001_10001',body: '700_001_10002'}
+                                avatar:{'1': '700_001_10000','3': '700_001_10001','4': '700_001_10002'}
                             };
                             let insertAvatar  = new Command('insert into player_avatar(wx_uid,weapon,head,body,createAt) values(?,?,?,?,?)',[wxUid,'700_001_10000','700_001_10001','700_001_10002',~~(new Date().getTime()/1000)]);
                             Executor.query(DBEnv_ZQ, insertAvatar,(e1)=>{
