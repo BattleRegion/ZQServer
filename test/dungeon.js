@@ -28,6 +28,16 @@ class Dungeon extends Base {
             }
         });
     }
+
+    ranking(){
+        this.send({
+            handler:'dungeon',
+            event:'ranking',
+            rawData:{
+                token:this.userToken
+            }
+        });
+    }
 }
 
 module.exports = Dungeon;
