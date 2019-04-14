@@ -180,13 +180,13 @@ module.exports = {
 		})
     },
     
-    getDamageRanking: function(wxUid){
+    getDamageRanking: function(wxUid, cb){
     		let totalDungeon = levelConf.getTotalDungeon();
     		let sql  = new Command('select * from dungeon_damage', []);
         Executor.query(DBEnv_ZQ, sql, (e,r)=> {
 			if(e) {
 				Log.error(`getDamageRanking db error ${se}`);
-				return new Error(GameCode.DB_ERROR);
+				cb(new Error(GameCode.DB_ERROR), null);
 			} else {
 				if(r) {
 					Log.info(`getDamageRanking success`);
@@ -205,9 +205,10 @@ module.exports = {
 						let rankDetail = rankDict[rank];
 						rankDetail.sort((a,b) => (a.damage > b.damage) ? 1 : ((b.damage > a.damage) ? -1 : 0));
 					}
-					return rankDict;
+					Log.info(`getDamageRanking ${JSON.stringify(rankDict)}`);
+					cb(null, rankDict);
 				} else {
-					return false;
+					cb(null, false);
 				}
 			}
 		})

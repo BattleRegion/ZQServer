@@ -358,12 +358,13 @@ module.exports = {
     },
     
     ranking: function (req_p, ws) {
-        let ranking = Player.getDamageRanking(req_p.rawData.uid);
-        Log.info(`random pos ${JSON.stringify(ranking)}`);
-        if (ranking) {
-        		BaseHandler.commonResponse(req_p, {code: GameCode.SUCCESS, ranking: ranking}, ws);
-        } else {
-        		BaseHandler.commonResponse(req_p, {code: GameCode.GET_RANKING_ERROR}, ws);
-        }
+    		let uid = req_p.rawData.uid;
+        Player.getDamageRanking(uid, (e, rankingInfo) => {
+            if (e) {
+                BaseHandler.commonResponse(req_p, {code: e.message}, ws);
+            } else {
+                BaseHandler.commonResponse(req_p, {code: GameCode.SUCCESS, rankingInfo: rankingInfo}, ws);
+            }
+        })
     }
 };
