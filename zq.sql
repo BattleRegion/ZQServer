@@ -142,13 +142,13 @@ DROP TABLE IF EXISTS `player_avatar`;
 CREATE TABLE `player_avatar` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `wx_uid` varchar(128) NOT NULL DEFAULT '',
-  `weapon` int(11) DEFAULT '0',
-  `deputy` int(11) DEFAULT '0',
-  `head` int(11) DEFAULT '0',
-  `body` int(11) DEFAULT '0',
+  `weapon` varchar(50) DEFAULT '0',
+  `deputy` varchar(50) DEFAULT '0',
+  `head` varchar(50) DEFAULT '0',
+  `body` varchar(50) DEFAULT '0',
   `createAt` varchar(10) NOT NULL DEFAULT '',
   PRIMARY KEY (`id`),
   UNIQUE KEY `wx_uid` (`wx_uid`)
 ) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
-insert into player_avatar values ('1','oQWQQ5SM04moIxt13PqmTqx0fN6Y','1','1','1','1','')
+insert into player_avatar values ('1','oQWQQ5W4UzXR3D5pebbzF99-PBEE','700_001_10000','0','700_001_10001','700_001_10002','');
