@@ -93,8 +93,8 @@ module.exports = {
     },
     
     //获取用户关卡层伤害
-    comparePlayerLevelDamage: function(wxUid, level, rounds, damage){
-    		// let rounds = parseInt(rounds);
+    comparePlayerLevelDamage: function(wxUid, level, roundNum, damage){
+    		let rounds = parseInt(roundNum);
     		//取出用户所有关卡所有层的伤害条目
         let sql  = new Command('select * from player_damage where wx_uid=?',[wxUid]);
         Executor.query(DBEnv_ZQ, sql, (e,r)=> {
