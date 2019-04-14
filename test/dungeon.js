@@ -21,7 +21,10 @@ class Dungeon extends Base {
             event:'finishLevel',
             rawData:{
                 token:this.userToken,
-                dungeonId:2
+                dungeonId:6,
+                result:1,
+                levelDamage:9000,
+                levelRounds:24
             }
         });
     }
