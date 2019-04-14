@@ -59,17 +59,22 @@ module.exports = {
                                 dungeon_level:'1_1_1',
                                 role:1,
                                 dungeon_role:null,
+                                avatar:{weapon: 700_001_10000,head: 700_001_10001,body: 700_001_10002}
                             };
-                            Executor.redisSet(DBEnv_ZQ, key, JSON.stringify(userInfo), (e)=>{
-                                if(e){
-                                    Log.error(`getPlayerInfo redis error ${e}`);
-                                    cb(new Error(GameCode.REDIS_ERROR), null);
-                                }
-                                else{
-                                    Log.info(`getPlayerInfo from create and insert into redis ${JSON.stringify(r)}`);
-                                    cb(null, userInfo);
-                                }
+                            let insertAvatar  = new Command('insert into player_avatar(wx_uid,weapon,head,body,createAt) values(?,?,?,?,?)',[wxUid,700_001_10000,700_001_10001,700_001_10002,~~(new Date().getTime()/1000)]);
+                            Executor.query(DBEnv_ZQ, insertAvatar,(e1)=>{
+                                Executor.redisSet(DBEnv_ZQ, key, JSON.stringify(userInfo), (e2)=>{
+                                    if(e2){
+                                        Log.error(`getPlayerInfo redis error ${e2}`);
+                                        cb(new Error(GameCode.REDIS_ERROR), null);
+                                    }
+                                    else{
+                                        Log.info(`getPlayerInfo from create and insert into redis ${JSON.stringify(r)}`);
+                                        cb(null, userInfo);
+                                    }
+                                });
                             });
+
                         }
                         else{
                             Log.error(`getPlayerInfo db error ${e}`);
@@ -94,7 +99,7 @@ module.exports = {
     
     //获取用户关卡层伤害
     comparePlayerLevelDamage: function(wxUid, level, rounds, damage){
-    		// let rounds = parseInt(rounds);
+        rounds = parseInt(rounds);
     		//取出用户所有关卡所有层的伤害条目
         let sql  = new Command('select * from player_damage where wx_uid=?',[wxUid]);
         Executor.query(DBEnv_ZQ, sql, (e,r)=> {
