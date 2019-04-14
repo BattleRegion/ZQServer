@@ -60,9 +60,9 @@ module.exports = {
                                 dungeon_level:'1_1_1',
                                 role:1,
                                 dungeon_role:null,
-                                avatar:{weapon: 700_001_10000,head: 700_001_10001,body: 700_001_10002}
+                                avatar:{weapon: '700_001_10000',head: '700_001_10001',body: '700_001_10002'}
                             };
-                            let insertAvatar  = new Command('insert into player_avatar(wx_uid,weapon,head,body,createAt) values(?,?,?,?,?)',[wxUid,700_001_10000,700_001_10001,700_001_10002,~~(new Date().getTime()/1000)]);
+                            let insertAvatar  = new Command('insert into player_avatar(wx_uid,weapon,head,body,createAt) values(?,?,?,?,?)',[wxUid,'700_001_10000','700_001_10001','700_001_10002',~~(new Date().getTime()/1000)]);
                             Executor.query(DBEnv_ZQ, insertAvatar,(e1)=>{
                                 Executor.redisSet(DBEnv_ZQ, key, JSON.stringify(userInfo), (e2)=>{
                                     if(e2){
