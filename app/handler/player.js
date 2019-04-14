@@ -13,7 +13,9 @@ module.exports = {
             else{
                 let rawData = Object.assign({code:GameCode.SUCCESS},{
                     uid:r.uid,
-                    dungeon_level:r.dungeon_level
+                    dungeon_level:r.dungeon_level,
+                    avatar:r.avatar
+
                 });
                 BaseHandler.commonResponse(req_p, rawData,ws);
             }

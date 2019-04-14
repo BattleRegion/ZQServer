@@ -22,7 +22,7 @@ module.exports = {
                     let sql  = new Command('insert into player(wx_uid,createAt) values(?,?)',[wxUid,~~(new Date().getTime()/1000)]);
                     Executor.query(DBEnv_ZQ, sql, (e,r)=>{
                         if(e && e.code === "ER_DUP_ENTRY"){
-                            let sql = new Command('select * from player where wx_uid = ?',[wxUid]);
+                            let sql = new Command('select * from player t1,player_avatar t2 where t1.wx_uid = ?',[wxUid],'and t2.wx_uid = ?',[wxUid]);
                             Executor.query(DBEnv_ZQ, sql, (se,sr)=> {
                                 if (se) {
                                     Log.error(`getPlayerInfo db error ${se}`);
@@ -30,12 +30,14 @@ module.exports = {
                                 }
                                 else{
                                     let dbPlayer = sr[0];
+                                    let playerAvatar = {weapon:dbPlayer['weapon'],deputy:dbPlayer['deputy'],head:dbPlayer['head'],body:dbPlayer['body']}
                                     let userInfo = {
                                         uid: dbPlayer['id'],
                                         wx_uid: dbPlayer['wx_uid'],
                                         dungeon_level:dbPlayer['dungeon_level'],
                                         dungeon_role:dbPlayer['dungeon_role'],
-                                        role:dbPlayer['role']
+                                        role:dbPlayer['role'],
+                                        avatar:playerAvatar
                                     };
                                     Executor.redisSet(DBEnv_ZQ, key, JSON.stringify(userInfo), (e)=>{
                                         if(e){
