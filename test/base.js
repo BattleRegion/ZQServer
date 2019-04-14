@@ -3,7 +3,7 @@ const CryptoUtil = require('../util/cryptoUtil');
 const sign = require('../conf/common')['package_md5_key'];
 class Base {
     constructor(env, handler){
-        this.userToken = '97bda6faae5432bc37655b47e08e59c66e35b9209e3c359c7fcdcb36a521e27de448a26a7a394ef19e6624002b13c9c5';
+        this.userToken = '97bda6faae5432bc37655b47e08e59c66e35b9209e3c359c7fcdcb36a521e27df3a468ab2823d3f93aaed043949de33c';
         this.url = env === "prod"?"wss://zq.magiclizi.com":"ws://127.0.0.1:9999";
         this.ws = new WebSocket(this.url);
 

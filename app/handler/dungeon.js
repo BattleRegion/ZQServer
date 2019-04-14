@@ -158,7 +158,7 @@ module.exports = {
                                     let lootInfo = [];
                                     if(result === 1){
                                     		//比较本层平均伤害
-                                    		Player.comparePlayerLevelDamage(uid,playerInfo['dungeon_level'],levelRounds,levelDamage);
+                                    		Player.comparePlayerLevelDamage(uid,playerInfo['dungeon_level'],nextDungeonLevel,levelRounds,levelDamage);
                                         //胜利才掉落
                                         lootInfo = this.lootFunc(playerInfo);
                                         if(hasNext){
@@ -355,5 +355,15 @@ module.exports = {
         unit.posY = randPos.y;
         existPos.splice(randomIndex, 1);
         Log.info(`random pos ${JSON.stringify(randPos)}`);
+    },
+    
+    ranking: function (req_p, ws) {
+        let ranking = Player.getDamageRanking(req_p.rawData.uid);
+        Log.info(`random pos ${JSON.stringify(ranking)}`);
+        if (ranking) {
+        		BaseHandler.commonResponse(req_p, {code: GameCode.SUCCESS, ranking: ranking}, ws);
+        } else {
+        		BaseHandler.commonResponse(req_p, {code: GameCode.GET_RANKING_ERROR}, ws);
+        }
     }
 };

@@ -1,6 +1,7 @@
 const DataAccess = require('dataAccess');
 const Executor = DataAccess.executor;
 const Command = DataAccess.command;
+const levelConf = require('./dungeon');
 const REDIS_PLAYER_KEY = 'ZQ_PLAYER_KEY';
 module.exports = {
 
@@ -74,7 +75,6 @@ module.exports = {
                                     }
                                 });
                             });
-
                         }
                         else{
                             Log.error(`getPlayerInfo db error ${e}`);
@@ -98,8 +98,8 @@ module.exports = {
     },
     
     //获取用户关卡层伤害
-    comparePlayerLevelDamage: function(wxUid, level, rounds, damage){
-        rounds = parseInt(rounds);
+    comparePlayerLevelDamage: function(wxUid, level, nextLevel, roundNum, damage){
+        let rounds = parseInt(roundNum);
     		//取出用户所有关卡所有层的伤害条目
         let sql  = new Command('select * from player_damage where wx_uid=?',[wxUid]);
         Executor.query(DBEnv_ZQ, sql, (e,r)=> {
@@ -112,6 +112,7 @@ module.exports = {
 					let findLevelDamage = false;
 					//用户当前关卡
 					let currentDungeon = level.split('_')[0];
+					let nextDungeon = nextLevel.split('_')[0];
 					let totalDamage = 0;
 					let plus = 0;
 					for (let i = 0; i < r.length; i++) {
@@ -143,7 +144,7 @@ module.exports = {
 					}
 					let dungeonAvgDamage = Math.round(totalDamage/plus);
 					//当前层平均伤害高于原来记录的当前层平均伤害，则需要更新用户当前关卡的总平均伤害
-					if(findLevelDamageChange) {
+					if(findLevelDamageChange || nextDungeon == currentDungeon+1) {
 						let dSql  = new Command('insert into dungeon_damage(wx_uid,dungeon,round_damage,createAt) values(?,?,?,?) ON DUPLICATE KEY UPDATE round_damage=?',[wxUid,currentDungeon,dungeonAvgDamage,~~(new Date().getTime()/1000),dungeonAvgDamage]);
 						Executor.query(DBEnv_ZQ, dSql, (e, r) => {
 							if(e) {
@@ -182,4 +183,37 @@ module.exports = {
 			}
 		})
     },
+
+    getDamageRanking: function(wxUid){
+    		let totalDungeon = levelConf.getTotalDungeon();
+    		let sql  = new Command('select * from dungeon_damage', []);
+        Executor.query(DBEnv_ZQ, sql, (e,r)=> {
+			if(e) {
+				Log.error(`getDamageRanking db error ${se}`);
+				return new Error(GameCode.DB_ERROR);
+			} else {
+				if(r) {
+					Log.info(`getDamageRanking success`);
+					let rankDict = {};
+					for (let i = 0; i < r.length; i++) {
+						let record = r[i];
+						let uid = record['wx_uid'];
+						if (!rankDict.hasOwnProperty(record['dungeon'])) {
+							rankDict[record['dungeon']] = [];
+						}
+						rankDict[record['dungeon']].push({'player': record['wx_uid'], 'damage': record['round_damage']});
+					}
+					let ranks = Object.keys(rankDict);
+					for (let i = 0; i < ranks.length; i++) {
+						let rank = ranks[i];
+						let rankDetail = rankDict[rank];
+						rankDetail.sort((a,b) => (a.damage > b.damage) ? 1 : ((b.damage > a.damage) ? -1 : 0));
+					}
+					return rankDict;
+				} else {
+					return false;
+				}
+			}
+		})
+    }
 };
