@@ -31,7 +31,6 @@ module.exports = {
                                 }
                                 else{
                                     let dbPlayer = sr[0];
-									console.log(dbPlayer);
 									let playerAvatar = {'1':dbPlayer['weapon'],'2':dbPlayer['deputy'],'3':dbPlayer['head'],'4':dbPlayer['body']}
                                     let userInfo = {
                                         uid: dbPlayer['id'],
@@ -41,16 +40,18 @@ module.exports = {
                                         role:dbPlayer['role'],
                                         avatar:playerAvatar
                                     };
-                                    Executor.redisSet(DBEnv_ZQ, key, JSON.stringify(userInfo), (e)=>{
-                                        if(e){
-                                            Log.error(`getPlayerInfo redis error ${e}`);
-                                            cb(new Error(GameCode.REDIS_ERROR), null);
-                                        }
-                                        else{
-                                            Log.info(`getPlayerInfo from db and insert into redis ${JSON.stringify(userInfo)}`);
-                                            cb(null, userInfo);
-                                        }
-                                    });
+									console.log(dbPlayer);
+									console.log(userInfo);
+									// Executor.redisSet(DBEnv_ZQ, key, JSON.stringify(userInfo), (e)=>{
+                                    //     if(e){
+                                    //         Log.error(`getPlayerInfo redis error ${e}`);
+                                    //         cb(new Error(GameCode.REDIS_ERROR), null);
+                                    //     }
+                                    //     else{
+                                    //         Log.info(`getPlayerInfo from db and insert into redis ${JSON.stringify(userInfo)}`);
+                                    //         cb(null, userInfo);
+                                    //     }
+                                    // });
                                 }
                             })
                         }
