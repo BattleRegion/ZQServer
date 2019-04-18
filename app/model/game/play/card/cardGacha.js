@@ -210,7 +210,8 @@ module.exports = {
 		//Get all cards' id in the gacha by gacha id
 		for (let i = 0; i < this.CardGacha.length; i++) {
 			let gacha = this.CardGacha[i];
-			if (gacha['CARD_GACHA_ID'] === gachaId) {
+			// temp asigned
+			if (gacha['CARD_GACHA_ID'] === '200_100_10000') {
 				playerRoundCards.push(gacha['CARD_ID']);
 			}
 			if (lootGacha && gacha['CARD_GACHA_ID'] === lootGacha) {
