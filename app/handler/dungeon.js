@@ -78,7 +78,7 @@ module.exports = {
                                     return BaseHandler.commonResponse(req_p, {code: GameCode.DB_ERROR}, ws);
                                 }
                                 BaseHandler.commonResponse(req_p, {
-                                    code: GameCode.SUCCESS, dungeonId: did, role: role, enemies: enemies,totalCount:totalCount,
+                                    code: GameCode.SUCCESS, dungeonId: did, role: role, enemies: enemies,totalCount:totalCount,level:level,
                                     elements: curLevelBasic['SURFACE_ELEMENT'], globalConf: {
                                         a_factor: GlobalConf.getGlobalConf("A_FACTOR"),
                                         b_factor: GlobalConf.getGlobalConf("B_FACTOR"),
@@ -89,7 +89,7 @@ module.exports = {
                         else {
                             //存在则不需要记录
                             BaseHandler.commonResponse(req_p, {
-                                code: GameCode.SUCCESS, dungeonId: existDungeon['id'], role: role, enemies: enemies,totalCount:totalCount,
+                                code: GameCode.SUCCESS, dungeonId: existDungeon['id'], role: role, enemies: enemies,totalCount:totalCount,level:level,
                                 elements: curLevelBasic['SURFACE_ELEMENT'], globalConf: {
                                     a_factor: GlobalConf.getGlobalConf("A_FACTOR"),
                                     b_factor: GlobalConf.getGlobalConf("B_FACTOR"),
