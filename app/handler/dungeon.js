@@ -26,6 +26,7 @@ module.exports = {
                 let levelM = ~~d_level_info[1];
                 let level = ~~d_level_info[2];
                 let curLevelBasic = LevelBasic.confByDungeonLevel(dId, levelM, level);
+                let totalCount = LevelBasic.dungeonTotalLevels(dId);
                 if (!curLevelBasic) {
                     Log.info(`用户${uid}需要创建 LEVEL_BASIC_NOT_EXIST ${playerInfo['dungeon_level']}`);
                     return BaseHandler.commonResponse(req_p, {code: GameCode.LEVEL_BASIC_NOT_EXIST}, ws);
@@ -77,7 +78,7 @@ module.exports = {
                                     return BaseHandler.commonResponse(req_p, {code: GameCode.DB_ERROR}, ws);
                                 }
                                 BaseHandler.commonResponse(req_p, {
-                                    code: GameCode.SUCCESS, dungeonId: did, role: role, enemies: enemies,
+                                    code: GameCode.SUCCESS, dungeonId: did, role: role, enemies: enemies,totalCount:totalCount,
                                     elements: curLevelBasic['SURFACE_ELEMENT'], globalConf: {
                                         a_factor: GlobalConf.getGlobalConf("A_FACTOR"),
                                         b_factor: GlobalConf.getGlobalConf("B_FACTOR"),
@@ -88,7 +89,7 @@ module.exports = {
                         else {
                             //存在则不需要记录
                             BaseHandler.commonResponse(req_p, {
-                                code: GameCode.SUCCESS, dungeonId: existDungeon['id'], role: role, enemies: enemies,
+                                code: GameCode.SUCCESS, dungeonId: existDungeon['id'], role: role, enemies: enemies,totalCount:totalCount,
                                 elements: curLevelBasic['SURFACE_ELEMENT'], globalConf: {
                                     a_factor: GlobalConf.getGlobalConf("A_FACTOR"),
                                     b_factor: GlobalConf.getGlobalConf("B_FACTOR"),
