@@ -24,6 +24,7 @@ module.exports = {
                     Executor.query(DBEnv_ZQ, sql, (e,r)=>{
                         if(e && e.code === "ER_DUP_ENTRY"){
                             let sql = new Command('select * from player t1,player_avatar t2 where t1.wx_uid = ?',[wxUid],'and t2.wx_uid = ?',[wxUid]);
+                            let sql1 = new Command('select * from player_avatar where ')
                             Executor.query(DBEnv_ZQ, sql, (se,sr)=> {
                                 if (se) {
                                     Log.error(`getPlayerInfo db error ${se}`);
