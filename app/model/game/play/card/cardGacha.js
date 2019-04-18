@@ -197,7 +197,8 @@ module.exports = {
 		let cardIdList = [];
 		let lootGacha = null;
 		let levelInfo = level.split('_');
-		
+		console.log(`getLootCards ${level} ${gachaId}`);
+
 		for (let i = 0; i < this.levelBasic.length; i++) {
 			let level = this.levelBasic[i];
 			if (level['ID'] === levelInfo[0] && level['STAGE'] === levelInfo[1] && level['STAGE_NUM'] === levelInfo[2]) {
@@ -220,7 +221,7 @@ module.exports = {
 		let bSet = new Set(levelLootCards);
 		let cSet = new Set([...aSet].filter(x => bSet.has(x)));
 		cardIdList = [...cSet];
-
+		console.log(cardIdList);
 		//Randomly get 3 loot cards from card group
 	    let shuffledList = cardIdList.sort(() => 0.5 - Math.random());
 	    let lootList = shuffledList.slice(0, 3);
