@@ -31,7 +31,8 @@ module.exports = {
                                 }
                                 else{
                                     let dbPlayer = sr[0];
-                                    let playerAvatar = {'1':dbPlayer['weapon'],'2':dbPlayer['deputy'],'3':dbPlayer['head'],'4':dbPlayer['body']}
+									console.log(dbPlayer);
+									let playerAvatar = {'1':dbPlayer['weapon'],'2':dbPlayer['deputy'],'3':dbPlayer['head'],'4':dbPlayer['body']}
                                     let userInfo = {
                                         uid: dbPlayer['id'],
                                         wx_uid: dbPlayer['wx_uid'],
