@@ -23,34 +23,38 @@ module.exports = {
                     let sql  = new Command('insert into player(wx_uid,createAt) values(?,?)',[wxUid,~~(new Date().getTime()/1000)]);
                     Executor.query(DBEnv_ZQ, sql, (e,r)=>{
                         if(e && e.code === "ER_DUP_ENTRY"){
-                            let sql = new Command('select * from player t1,player_avatar t2 where t1.wx_uid = ?',[wxUid],'and t2.wx_uid = ?',[wxUid]);
-                            let sql1 = new Command('select * from player_avatar where ')
+                            let sql = new Command('select * from player_avatar where wx_uid = ?',[wxUid]);
                             Executor.query(DBEnv_ZQ, sql, (se,sr)=> {
                                 if (se) {
                                     Log.error(`getPlayerInfo db error ${se}`);
                                     cb(new Error(GameCode.DB_ERROR), null);
                                 }
                                 else{
-                                    let dbPlayer = sr[0];
-                                    let playerAvatar = {'1':dbPlayer['weapon'],'2':dbPlayer['deputy'],'3':dbPlayer['head'],'4':dbPlayer['body']}
-                                    let userInfo = {
-                                        uid: dbPlayer['id'],
-                                        wx_uid: dbPlayer['wx_uid'],
-                                        dungeon_level:dbPlayer['dungeon_level'],
-                                        dungeon_role:dbPlayer['dungeon_role'],
-                                        role:dbPlayer['role'],
-                                        avatar:playerAvatar
-                                    };
-                                    Executor.redisSet(DBEnv_ZQ, key, JSON.stringify(userInfo), (e)=>{
-                                        if(e){
-                                            Log.error(`getPlayerInfo redis error ${e}`);
-                                            cb(new Error(GameCode.REDIS_ERROR), null);
-                                        }
-                                        else{
-                                            Log.info(`getPlayerInfo from db and insert into redis ${JSON.stringify(userInfo)}`);
-                                            cb(null, userInfo);
-                                        }
-                                    });
+                                	if(sr.length > 0){
+										let dbPlayer = sr[0];
+										let playerAvatar = {'1':dbPlayer['weapon'],'2':dbPlayer['deputy'],'3':dbPlayer['head'],'4':dbPlayer['body']}
+										let userInfo = {
+											uid: dbPlayer['id'],
+											wx_uid: dbPlayer['wx_uid'],
+											dungeon_level:dbPlayer['dungeon_level'],
+											dungeon_role:dbPlayer['dungeon_role'],
+											role:dbPlayer['role'],
+											avatar:playerAvatar
+										};
+										Executor.redisSet(DBEnv_ZQ, key, JSON.stringify(userInfo), (e)=>{
+											if(e){
+												Log.error(`getPlayerInfo redis error ${e}`);
+												cb(new Error(GameCode.REDIS_ERROR), null);
+											}
+											else{
+												Log.info(`getPlayerInfo from db and insert into redis ${JSON.stringify(userInfo)}`);
+												cb(null, userInfo);
+											}
+										});
+									}
+									else{
+										cb(new Error(GameCode.GET_USER_EQUIP_ERROR), null);
+									}
                                 }
                             })
                         }
