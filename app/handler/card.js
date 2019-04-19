@@ -18,7 +18,7 @@ module.exports = {
                 let play_role = playerInfo['role'];
                 let base_gacha = CardGacha.roleBaseGacha(play_role);
                 if (!base_gacha) {
-                    BaseHandler.commonResponse(req_p, {code: `No base gacha found by role: ${play_role}`}, ws);
+                    return BaseHandler.commonResponse(req_p, {code: `No base gacha found by role: ${play_role}`}, ws);
                 }
                 if (discard) {
                     CardGacha.drawPlayerCards(uid, discard, base_gacha['BASIC_CARDGROUPID'], base_gacha['BASIC_CARDNUM'], (e, handInfo) => {
@@ -92,7 +92,7 @@ module.exports = {
                 if (!base_gacha) {
                     BaseHandler.commonResponse(req_p, {code: `No base gacha found by role: ${play_role}`}, ws);
                 }
-                else{
+                else {
                     //, playerInfo['dungeon_level']
                     CardGacha.setLootCards(uid, lootId, base_gacha['BASIC_CARDGROUPID'], (e, success) => {
                         if (e) {
