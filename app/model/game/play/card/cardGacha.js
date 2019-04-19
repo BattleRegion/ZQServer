@@ -51,13 +51,13 @@ module.exports = {
 
                 if (r) {
                     let cardsAll = JSON.parse(r);
-                    if (cardsAll['handList']) {
+                    if ('handList' in cardsAll && cardsAll['handList'].length > 0) {
                         Log.info(`getInitPlayerCards from redis ${r}`);
                         return cb(null, cardsAll['handList']);
                     }
                     // if has loot cards
-                    if (cardsAll['lootCard']) {
-                        cardIdList.push(cardsAll['lootCards']);
+                    if ('lootCard' in cardsAll && cardsAll['lootCard'].length > 0) {
+                        cardIdList.push(cardsAll['lootCard']);
                     }
                 }
                 //Get all cards' id in the gacha by gacha id
@@ -248,7 +248,10 @@ module.exports = {
             } else {
                 if (r) {
                     let cardsAll = JSON.parse(r);
-                    cardsAll['lootCard'] = lootId;
+		    if (lootId) {
+			cardsAll['lootCard'] = lootId;
+		    }
+		    delete cardsAll.handList;
                     Executor.redisSet(DBEnv_ZQ, cards_key, JSON.stringify(cardsAll), (e) => {
                         if (e) {
                             Log.error(`set lootCard into redis error ${e}`);
