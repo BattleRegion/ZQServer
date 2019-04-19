@@ -23,7 +23,7 @@ module.exports = {
                     let sql  = new Command('insert into player(wx_uid,createAt) values(?,?)',[wxUid,~~(new Date().getTime()/1000)]);
                     Executor.query(DBEnv_ZQ, sql, (e,r)=>{
                         if(e && e.code === "ER_DUP_ENTRY"){
-                            let sql = new Command('select * from player_avatar where wx_uid = ?',[wxUid]);
+                            let sql = new Command('select * from player left join player_avatar on(player.wx_uid = player_avatar.wx_uid) where player.wx_uid = ?',[wxUid]);
                             Executor.query(DBEnv_ZQ, sql, (se,sr)=> {
                                 if (se) {
                                     Log.error(`getPlayerInfo db error ${se}`);
