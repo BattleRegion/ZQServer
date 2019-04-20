@@ -238,26 +238,58 @@ module.exports = {
 
         if (!lootId) {
             Log.info('No loot card is selected.');
-            return false;
+            cb(null, false);
         }
 
         Executor.redisGet(DBEnv_ZQ, cards_key, (e, r) => {
             if (e) {
-                Log.error(`setLootCards: get player cards redis error ${e}`);
+                Log.error(`setLootCards: get player loot cards redis error ${e}`);
                 cb(new Error(GameCode.REDIS_ERROR), null);
             } else {
                 if (r) {
                     let cardsAll = JSON.parse(r);
-		    if (lootId) {
-			cardsAll['lootCard'] = lootId;
-		    }
-		    delete cardsAll.handList;
+				    if ('lootCard' in cardsAll) {
+						cardsAll['lootCard'].push(lootId);
+				    } else {
+				    		cardsAll['lootCard'] = [];
+						cardsAll['lootCard'].push(lootId);
+				    }
+				    delete cardsAll.handList;
                     Executor.redisSet(DBEnv_ZQ, cards_key, JSON.stringify(cardsAll), (e) => {
                         if (e) {
                             Log.error(`set lootCard into redis error ${e}`);
                             cb(new Error(GameCode.REDIS_ERROR), null);
                         } else {
                             Log.info(`make lootCard and insert into redis ${JSON.stringify(cardsAll)} ...`);
+                            cb(null, true);
+                        }
+                    })
+                } else {
+                    Log.error(`No player cards found from key ${cards_key} in redis`);
+                    cb(new Error(GameCode.REDIS_ERROR), null);
+                }
+            }
+        })
+    },
+    
+    clearLootCards: function (wxUid, cb) {
+    		let cards_key = `${REDIS_CARDS_KEY}:${wxUid}`;
+        Log.info(`clearLootCards: Try to clear player cards from key ${cards_key}`);
+        
+        Executor.redisGet(DBEnv_ZQ, cards_key, (e, r) => {
+            if (e) {
+                Log.error(`clearLootCards: clear player loot cards redis error ${e}`);
+                cb(new Error(GameCode.REDIS_ERROR), null);
+            } else {
+            		if (r) {
+                    let cardsAll = JSON.parse(r);
+                    delete cardsAll.lootCard;
+                    Executor.redisSet(DBEnv_ZQ, cards_key, JSON.stringify(cardsAll), (e) => {
+                        if (e) {
+                            Log.error(`clear lootCard from redis error ${e}`);
+                            cb(new Error(GameCode.REDIS_ERROR), null);
+                        } else {
+                            Log.info(`clear lootCard and insert into redis ${JSON.stringify(cardsAll)} ...`);
                             cb(null, true);
                         }
                     })

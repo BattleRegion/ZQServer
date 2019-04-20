@@ -142,13 +142,10 @@ module.exports = {
                                 let sql1 = new Command('update player set dungeon_level = ? where wx_uid = ?', [nextDungeonLevel, uid]);
                                 sqls.push(sql1);
                             }
-                            else if(result === 2){
+                            else if(result === 2 || result === 3){
                                 let temp = "1_1_1";
                                 let sql1 = new Command('update player set dungeon_role = null, dungeon_level = ? where wx_uid = ?', [uid,temp]);
                                 sqls.push(sql1);
-                            }
-                            else if(result === 3){
-                                //退出啥都不干，再进来就是当前的role 状态和 level 层数
                             }
 
                             Executor.transaction(DBEnv_ZQ, sqls, (e, r) => {
@@ -163,17 +160,21 @@ module.exports = {
                                     		Player.comparePlayerLevelDamage(uid,playerInfo['dungeon_level'],nextDungeonLevel,levelRounds,levelDamage);
                                         //胜利才掉落
                                         lootInfo = this.lootFunc(playerInfo);
+                                        let currentDungeon = playerInfo['dungeon_level'].split('_')[0];
+                                        let nextDungeon = nextDungeonLevel.split('_')[0];
+                                        if (nextDungeon == currentDungeon+1) {
+                                        		CardGacha.clearLootCards(uid);
+                                        }
                                         if(hasNext){
                                             playerInfo.dungeon_level = nextDungeonLevel;
                                         }
                                     }
-                                    else if(result === 2){
+                                    else if(result === 2 || result === 3){
                                         playerInfo.dungeon_level = "1_1_1";
                                         playerInfo.dungeon_role = null;
+                                        CardGacha.clearLootCards(uid);
                                     }
-                                    else if(result === 3){
-                                        //退出啥都不干
-                                    }
+                                    
                                     Player.refreshCachePlayerInfo(playerInfo, e => {
                                         if (e) {
                                             Log.error(`finishLevel redis error ${e}`);
