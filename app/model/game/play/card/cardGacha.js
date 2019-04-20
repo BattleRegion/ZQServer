@@ -119,8 +119,8 @@ module.exports = {
                 if (cardsAll) {
                     discardList = cardsAll['discardList'];
                 }
-                for (let i = 0; i < discard.length; i++) {
-                    discardList.push(discard[i]);
+                for (let i = 0; i < cardsAll['handList'].length; i++) {
+                    discardList.push(cardsAll['handList'][i]);
                 }
 
                 let cardIdList = cardsAll['cardIdList'];
