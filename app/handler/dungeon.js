@@ -163,8 +163,8 @@ module.exports = {
                                         let currentDungeon = playerInfo['dungeon_level'].split('_')[0];
                                         let nextDungeon = nextDungeonLevel.split('_')[0];
                                         if (nextDungeon == currentDungeon+1) {
-                                        		CardGacha.clearLootCards(uid, (e, msg) => {
-                                        			if (e) {
+                                        		CardGacha.clearLootCards(uid, (err, msg) => {
+                                        			if (er) {
                                         				Log.error('clearLootCards failed');
                                         			} else {
                                         				Log.info('clearLootCards success');
@@ -178,8 +178,8 @@ module.exports = {
                                     else if(result === 2 || result === 3){
                                         playerInfo.dungeon_level = "1_1_1";
                                         playerInfo.dungeon_role = null;
-                                        CardGacha.clearLootCards(uid, (e, msg) => {
-                                        		if (e) {
+                                        CardGacha.clearLootCards(uid, (err, msg) => {
+                                        		if (err) {
                                         			Log.error('clearLootCards failed');
                                         		} else {
                                         			Log.info('clearLootCards success');
