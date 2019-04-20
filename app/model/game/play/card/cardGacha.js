@@ -60,6 +60,7 @@ module.exports = {
                     		for (let i = 0; i < cardsAll['lootCard'].length; i++) {
                         		cardIdList.push(cardsAll['lootCard'][i]);
                        	}
+                    		cards['lootCard'] = cardsAll['lootCard'];
                     }
                 }
                 //Get all cards' id in the gacha by gacha id
