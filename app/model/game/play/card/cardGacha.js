@@ -57,7 +57,9 @@ module.exports = {
                     }
                     // if has loot cards
                     if ('lootCard' in cardsAll && cardsAll['lootCard'].length > 0) {
-                        cardIdList.push(cardsAll['lootCard']);
+                    		for (let i = 0; i < cardsAll['lootCard'].length; i++) {
+                        		cardIdList.push(cardsAll['lootCard'][i]);
+                       	}
                     }
                 }
                 //Get all cards' id in the gacha by gacha id
