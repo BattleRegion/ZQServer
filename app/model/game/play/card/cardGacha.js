@@ -242,7 +242,8 @@ module.exports = {
 
         if (!lootId) {
             Log.info('No loot card is selected.');
-            cb(null, false);
+            cb(null, null);
+            return;
         }
 
         Executor.redisGet(DBEnv_ZQ, cards_key, (e, r) => {
@@ -265,7 +266,7 @@ module.exports = {
                             cb(new Error(GameCode.REDIS_ERROR), null);
                         } else {
                             Log.info(`make lootCard and insert into redis ${JSON.stringify(cardsAll)} ...`);
-                            cb(null, true);
+                            cb(null, null);
                         }
                     })
                 } else {
@@ -294,7 +295,7 @@ module.exports = {
                             cb(new Error(GameCode.REDIS_ERROR), null);
                         } else {
                             Log.info(`clear lootCard and insert into redis ${JSON.stringify(cardsAll)} ...`);
-                            cb(null, true);
+                            cb(null, null);
                         }
                     })
                 } else {
