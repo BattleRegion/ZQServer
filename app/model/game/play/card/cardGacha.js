@@ -133,6 +133,7 @@ module.exports = {
                 }
 
                 let cards = {};
+                cards['lootCard'] = cardsAll['lootCard'];
                 if (cardIdList.length > 0) {
                     //Randomly get $cardNum cards from card group
                     let shuffledList = cardIdList.sort(() => 0.5 - Math.random());
